@@ -10,9 +10,13 @@ A Golang client for the Safaricom Mpesa Daraja API. This SDK provides a simple i
 - Customer to Business (C2B) Simulation
 - Business to Customer (B2C) Payment
 - Business to Business (B2B) Payment
+- Business Pay Bill
+- B2C Account Top Up
 - Transaction Status Query
 - Account Balance Query
 - Payment Reversal
+- Dynamic QR Code Generation
+- M-Pesa Ratiba (Standing Order) API
 
 ## Pre-requisites
 
@@ -176,6 +180,51 @@ if err != nil {
 fmt.Printf("B2B Payment Response: %+v\n", b2bResponse)
 ```
 
+### Business Pay Bill
+
+```go
+// Make a Business Pay Bill payment
+response, err := client.BusinessPayBill(mpesa.BusinessPayBillRequest{
+    Initiator:          "testapi",                      // API Username
+    SecurityCredential: securityCredential,             // Encrypted password
+    Amount:             "100",                          // Amount to pay
+    PartyA:             "123456",                       // Your business shortcode
+    PartyB:             "000000",                       // Recipient paybill number
+    AccountReference:   "INV001",                       // Account reference (up to 13 chars)
+    Requester:          "254700000000",                 // Optional: Customer phone number
+    Remarks:            "Payment for utility bill",     // Transaction remarks
+    QueueTimeOutURL:    "https://example.com/timeout",  // Timeout URL
+    ResultURL:          "https://example.com/result",   // Result URL
+    Occasion:           "Monthly Payment",              // Optional: Additional information
+})
+if err != nil {
+    log.Fatalf("Failed to make Business Pay Bill payment: %v", err)
+}
+fmt.Printf("Business Pay Bill Response: %+v\n", response)
+```
+
+### B2C Account Top Up
+
+```go
+// Load funds to a B2C shortcode for disbursement
+response, err := client.B2CAccountTopUp(mpesa.B2CTopUpRequest{
+    Initiator:          "testapi",                      // API Username
+    SecurityCredential: securityCredential,             // Encrypted password
+    Amount:             "10000",                        // Amount to load (in smallest currency unit)
+    PartyA:             "600979",                       // Your business shortcode
+    PartyB:             "600000",                       // B2C shortcode to be funded
+    AccountReference:   "TopUp001",                     // Optional: Account reference
+    Requester:          "254708374149",                 // Optional: Requester phone number
+    Remarks:            "B2C account funding",          // Transaction remarks
+    QueueTimeOutURL:    "https://example.com/timeout",  // Timeout URL
+    ResultURL:          "https://example.com/result",   // Result URL
+})
+if err != nil {
+    log.Fatalf("Failed to make B2C Account Top Up: %v", err)
+}
+fmt.Printf("B2C Account Top Up Response: %+v\n", response)
+```
+
 ### Transaction Status
 
 ```go
@@ -236,6 +285,54 @@ if err != nil {
     log.Fatalf("Failed to reverse transaction: %v", err)
 }
 fmt.Printf("Reversal Response: %+v\n", reversalResponse)
+```
+
+### Dynamic QR Code Generation
+
+```go
+// Generate a Dynamic QR Code for M-Pesa transactions
+qrResponse, err := client.GenerateQRCode(mpesa.QRCodeRequest{
+    MerchantName: "TEST Business",               // Merchant Name
+    RefNo:        "Invoice123",                  // Reference Number
+    Amount:       1000,                          // Amount (in smallest currency unit)
+    TrxCode:      mpesa.TrxCodeBuyGoods,         // Transaction Code (BG, WA, PB, SM, SB)
+    CPI:          "254708374149",                // Customer Phone/Till/Paybill
+    Size:         "300",                         // QR Code size in pixels
+})
+if err != nil {
+    log.Fatalf("Failed to generate QR code: %v", err)
+}
+fmt.Printf("QR Code Response: %+v\n", qrResponse)
+
+// The QR Code is returned as a base64-encoded string in qrResponse.QRCode
+// You can convert this to an image and display it in your application
+```
+
+### M-Pesa Ratiba (Standing Order) API
+
+```go
+// Create a standing order (M-Pesa Ratiba) for recurring payments
+ratibaResponse, err := client.CreateStandingOrder(mpesa.RatibaRequest{
+    StandingOrderName: "Monthly Rent Payment",
+    StartDate:         "20250901",                     // Format: YYYYMMDD
+    EndDate:           "20260901",                     // Format: YYYYMMDD
+    BusinessShortCode: "174379",                       // Your business short code
+    TransactionType:   mpesa.TransactionTypePayBill,   // For Paybill
+    IdentifierType:    mpesa.ReceiverTypePaybill,      // For Paybill
+    Amount:            "5000",                         // Amount in smallest currency unit
+    PhoneNumber:       "254708374149",                 // Customer's phone number
+    CallBackURL:       "https://example.com/callback", // Your callback URL
+    AccountReference:  "Rent123",                      // Account reference
+    TransactionDesc:   "Monthly Rent",                 // Transaction description
+    Frequency:         mpesa.FrequencyMonthly,         // Monthly payments
+})
+if err != nil {
+    log.Fatalf("Failed to create standing order: %v", err)
+}
+fmt.Printf("Standing Order Response: %+v\n", ratibaResponse)
+
+// Note: The M-Pesa Ratiba API is a commercial API that requires a contract with Safaricom.
+// For production use, you need to contact Safaricom at apisupport@safaricom.co.ke after testing.
 ```
 
 ## Testing
