@@ -12,6 +12,7 @@ A Golang client for the Safaricom Mpesa Daraja API. This SDK provides a simple i
 - Business to Business (B2B) Payment
 - Business Pay Bill
 - B2C Account Top Up
+- B2B Express CheckOut (USSD Push to Till)
 - Transaction Status Query
 - Account Balance Query
 - Payment Reversal
@@ -223,6 +224,31 @@ if err != nil {
     log.Fatalf("Failed to make B2C Account Top Up: %v", err)
 }
 fmt.Printf("B2C Account Top Up Response: %+v\n", response)
+```
+
+### B2B Express CheckOut (USSD Push to Till)
+
+```go
+// Generate a unique request reference ID
+requestRefID := fmt.Sprintf("REF-%d", time.Now().Unix())
+
+// Initiate USSD Push to Till (B2B Express CheckOut)
+response, err := client.UssdPush(mpesa.UssdPushRequest{
+    PrimaryShortCode:  "000001",                    // Merchant's till number (sending money)
+    ReceiverShortCode: "000002",                    // Vendor's paybill (receiving money)
+    Amount:            "100",                       // Amount to send
+    PaymentRef:        "INV12345",                  // Payment reference
+    CallbackURL:       "https://example.com/callback", // Callback URL for transaction result
+    PartnerName:       "ACME Store",                // Vendor's friendly name
+    RequestRefID:      requestRefID,                // Unique request reference ID
+})
+if err != nil {
+    log.Fatalf("Failed to initiate USSD Push: %v", err)
+}
+fmt.Printf("USSD Push Response: %+v\n", response)
+
+// The merchant will receive a USSD prompt to enter their operator ID, PIN, and confirm payment
+// The final result will be sent to your callback URL
 ```
 
 ### Transaction Status
