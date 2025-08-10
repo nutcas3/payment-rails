@@ -5,7 +5,7 @@ A Golang client for the Safaricom Mpesa Daraja API. This SDK provides a simple i
 ## Features
 
 - STK Push (Lipa Na M-Pesa Online)
-- STK Push Query
+- M-Pesa Express Query (STK Push Query)
 - Customer to Business (C2B) URL Registration
 - Customer to Business (C2B) Simulation
 - Business to Customer (B2C) Payment
@@ -13,6 +13,7 @@ A Golang client for the Safaricom Mpesa Daraja API. This SDK provides a simple i
 - Business Pay Bill
 - B2C Account Top Up
 - B2B Express CheckOut (USSD Push to Till)
+- Tax Remittance to KRA
 - Transaction Status Query
 - Account Balance Query
 - Payment Reversal
@@ -107,7 +108,29 @@ if err != nil {
 fmt.Printf("STK Push Query Response: %+v\n", queryResponse)
 ```
 
-### Customer to Business (C2B)
+### M-Pesa Express Query (STK Push Query)
+
+```go
+// Check the status of a previous STK Push transaction
+response, err := client.QueryStkPushStatus(mpesa.STKPushQueryRequest{
+    BusinessShortCode: "174379",                      // Your business shortcode
+    CheckoutRequestID: "ws_CO_260520211133524545",    // The CheckoutRequestID from the STK Push response
+})
+if err != nil {
+    log.Fatalf("Failed to query STK Push status: %v", err)
+}
+
+// Interpret the response
+if response.ResultCode == "0" {
+    fmt.Println("Transaction was successful!")
+} else if response.ResultCode == "1032" {
+    fmt.Println("Transaction was cancelled by the user")
+} else {
+    fmt.Println("Transaction failed or is still being processed")
+}
+```
+
+### Customer to Business (C2B) URL Registration
 
 ```go
 // Register C2B URL
@@ -249,6 +272,28 @@ fmt.Printf("USSD Push Response: %+v\n", response)
 
 // The merchant will receive a USSD prompt to enter their operator ID, PIN, and confirm payment
 // The final result will be sent to your callback URL
+```
+
+### Tax Remittance to KRA
+
+```go
+// Remit tax to KRA
+response, err := client.RemitTax(mpesa.TaxRemittanceRequest{
+    Initiator:          "testapi",                      // API Username
+    SecurityCredential: securityCredential,             // Encrypted password
+    Amount:             "239",                          // Amount to remit
+    PartyA:             "888880",                       // Your business shortcode
+    AccountReference:   "353353",                       // Payment Registration Number (PRN) from KRA
+    Remarks:            "Tax payment for Q2 2025",      // Transaction remarks
+    QueueTimeOutURL:    "https://example.com/timeout",  // Timeout URL
+    ResultURL:          "https://example.com/result",   // Result URL
+})
+if err != nil {
+    log.Fatalf("Failed to remit tax: %v", err)
+}
+fmt.Printf("Tax Remittance Response: %+v\n", response)
+
+// Note: Prior integration with KRA is required for tax declaration and PRN generation
 ```
 
 ### Transaction Status
