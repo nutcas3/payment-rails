@@ -19,6 +19,7 @@ A Golang client for the Safaricom Mpesa Daraja API. This SDK provides a simple i
 - Payment Reversal
 - Dynamic QR Code Generation
 - M-Pesa Ratiba (Standing Order) API
+- Bill Manager API (Onboarding, Invoicing, Reconciliation)
 
 ## Pre-requisites
 
@@ -404,6 +405,158 @@ fmt.Printf("Standing Order Response: %+v\n", ratibaResponse)
 
 // Note: The M-Pesa Ratiba API is a commercial API that requires a contract with Safaricom.
 // For production use, you need to contact Safaricom at apisupport@safaricom.co.ke after testing.
+```
+
+### Bill Manager API
+
+#### Onboarding (Opt-in)
+
+```go
+// Opt-in to Bill Manager
+response, err := client.OptInBillManager(mpesa.BillManagerOptInRequest{
+    Shortcode:       "718003",                   // Your business shortcode
+    Email:           "youremail@gmail.com",      // Official contact email
+    OfficialContact: "0710123456",               // Official contact phone number
+    SendReminders:   "1",                        // Enable reminders (1) or disable (0)
+    Logo:            "base64_encoded_image",     // Optional: Base64 encoded image
+    CallbackURL:     "https://example.com/callback", // URL to receive payment notifications
+})
+if err != nil {
+    log.Fatalf("Failed to opt-in to Bill Manager: %v", err)
+}
+fmt.Printf("Bill Manager Opt-In Response: %+v\n", response)
+```
+
+#### Creating a Single Invoice
+
+```go
+// Create a single invoice
+response, err := client.CreateSingleInvoice(mpesa.BillManagerSingleInvoiceRequest{
+    ExternalReference: "#9932340",                // Unique invoice reference in your system
+    BilledFullName:    "John Doe",                // Name of the recipient
+    BilledPhoneNumber: "0722000000",              // Safaricom phone number to receive invoice
+    BilledPeriod:      "August 2025",             // Month and Year
+    InvoiceName:       "Monthly Subscription",    // Descriptive name for what customer is being billed
+    DueDate:           "2025-09-15",              // Date customer is expected to pay
+    AccountReference:  "1ASD678H",                // Account number that uniquely identifies a customer
+    Amount:            "800",                     // Total invoice amount in KES
+    InvoiceItems: []mpesa.BillManagerInvoiceItem{ // Optional: Additional billable items
+        {
+            ItemName: "Subscription",
+            Amount:   "700",
+        },
+        {
+            ItemName: "Processing Fee",
+            Amount:   "100",
+        },
+    },
+})
+if err != nil {
+    log.Fatalf("Failed to create invoice: %v", err)
+}
+fmt.Printf("Single Invoice Creation Response: %+v\n", response)
+```
+
+#### Creating Bulk Invoices
+
+```go
+// Create bulk invoices
+invoices := []mpesa.BillManagerSingleInvoiceRequest{
+    {
+        ExternalReference: "#9932341",
+        BilledFullName:    "John Doe",
+        BilledPhoneNumber: "0722000000",
+        BilledPeriod:      "August 2025",
+        InvoiceName:       "Monthly Subscription",
+        DueDate:           "2025-09-15",
+        AccountReference:  "1ASD678H",
+        Amount:            "800",
+        InvoiceItems: []mpesa.BillManagerInvoiceItem{
+            {
+                ItemName: "Subscription",
+                Amount:   "700",
+            },
+            {
+                ItemName: "Processing Fee",
+                Amount:   "100",
+            },
+        },
+    },
+    // Add more invoices as needed
+}
+
+response, err := client.CreateBulkInvoices(invoices)
+if err != nil {
+    log.Fatalf("Failed to create bulk invoices: %v", err)
+}
+fmt.Printf("Bulk Invoice Creation Response: %+v\n", response)
+```
+
+#### Payment Acknowledgment
+
+```go
+// Send payment acknowledgment
+response, err := client.SendPaymentAcknowledgment(mpesa.BillManagerAcknowledgmentRequest{
+    PaymentDate:       "2023-09-15 14:30:45", // Date and time of payment
+    PaidAmount:        "800",                 // Amount paid in KES
+    AccountReference:  "1ASD678H",            // Account reference used in payment
+    TransactionID:     "QXR12345678",         // M-PESA generated reference
+    PhoneNumber:       "0722000000",          // Customer's phone number
+    FullName:          "John Doe",            // Customer's full name
+    InvoiceName:       "Monthly Subscription", // Name of the invoice
+    ExternalReference: "#9932340",            // External reference of the invoice
+})
+if err != nil {
+    log.Fatalf("Failed to send payment acknowledgment: %v", err)
+}
+fmt.Printf("Payment Acknowledgment Response: %+v\n", response)
+```
+
+#### Canceling Invoices
+
+```go
+// Cancel a single invoice
+singleResponse, err := client.CancelSingleInvoice(mpesa.BillManagerCancelInvoiceRequest{
+    ExternalReference: "#9932340", // External reference of the invoice to cancel
+})
+if err != nil {
+    log.Fatalf("Failed to cancel single invoice: %v", err)
+}
+fmt.Printf("Single Invoice Cancellation Response: %+v\n", singleResponse)
+
+// Cancel multiple invoices in bulk
+bulkRequests := []mpesa.BillManagerCancelInvoiceRequest{
+    {
+        ExternalReference: "#9932341", // First invoice to cancel
+    },
+    {
+        ExternalReference: "#9932342", // Second invoice to cancel
+    },
+}
+
+bulkResponse, err := client.CancelBulkInvoices(bulkRequests)
+if err != nil {
+    log.Fatalf("Failed to cancel bulk invoices: %v", err)
+}
+fmt.Printf("Bulk Invoice Cancellation Response: %+v\n", bulkResponse)
+```
+
+#### Updating Opt-in Details
+
+```go
+// Update Bill Manager opt-in details
+response, err := client.UpdateOptInDetails(mpesa.BillManagerUpdateOptInRequest{
+    Shortcode:       "718003",                        // Your business shortcode
+    Email:           "newemail@yourbusiness.com",     // Updated email address
+    OfficialContact: "0710987654",                    // Updated contact phone number
+    SendReminders:   1,                               // Enable reminders (1) or disable (0)
+    Logo:            "updated_base64_encoded_image",  // Optional: Updated logo
+    CallbackURL:     "https://newdomain.com/callback", // Updated callback URL
+})
+if err != nil {
+    log.Fatalf("Failed to update opt-in details: %v", err)
+}
+fmt.Printf("Update Opt-In Details Response: %+v\n", response)
 ```
 
 ## Testing
