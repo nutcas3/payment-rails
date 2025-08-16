@@ -16,10 +16,25 @@ const (
 	SANDBOX    Environment = "sandbox"
 	PRODUCTION Environment = "production"
 
-	accountInfoURL  = "/api/v1/account/info"
-	forexRatesURL   = "/api/v1/forex/rates"
-	forexExchangeURL = "/api/v1/forex/exchange"
-	voomaPayURL     = "/api/v1/vooma/pay"
+	accountInfoURL      = "/api/v1/account/info"
+	accountBalanceURL   = "/api/v1/account/balance"
+	accountStatementURL = "/api/v1/account/statement"
+	accountTransferURL  = "/api/v1/account/transfer"
+	
+	forexRatesURL       = "/api/v1/forex/rates"
+	forexExchangeURL    = "/api/v1/forex/exchange"
+	
+	voomaPayURL         = "/api/v1/vooma/pay"
+	voomaStatusURL      = "/api/v1/vooma/status"
+	pesalinkURL         = "/api/v1/pesalink/transfer"
+	pesalinkStatusURL   = "/api/v1/pesalink/status"
+	
+	mobileMoneyURL      = "/api/v1/mobile/transfer"
+	mobileMoneyStatusURL = "/api/v1/mobile/status"
+	
+	utilityPaymentURL   = "/api/v1/utility/pay"
+	utilityStatusURL    = "/api/v1/utility/status"
+	utilityProvidersURL = "/api/v1/utility/providers"
 )
 
 type Service struct {
