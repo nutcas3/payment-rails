@@ -134,7 +134,15 @@ type MobileWalletRequest struct {
 		MobileNumber  string `json:"mobileNumber"`
 		WalletName    string `json:"walletName"`
 	} `json:"destination"`
-	Transfer    Transfer    `json:"transfer"`
+	Transfer    struct {
+		Type         string `json:"type"`
+		Amount       string `json:"amount"`
+		CurrencyCode string `json:"currencyCode"`
+		Reference    string `json:"reference"`
+		Date         string `json:"date"`
+		Description  string `json:"description"`
+		CallbackUrl  string `json:"callbackUrl"`
+	} `json:"transfer"`
 }
 
 // MobileWalletResponse represents the response for mobile wallet transfer
