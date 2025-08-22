@@ -9,8 +9,8 @@ import (
 
 const (
 	accountBalanceEndpoint = "/account-api/v3.0/accounts/balances"
-	miniStatementEndpoint  = "/account-api/v3.0/accounts/ministatement"
-	fullStatementEndpoint  = "/account-api/v3.0/accounts/fullstatement"
+	miniStatementEndpoint  = "/account-api/v3.0/accounts/miniStatement"
+	fullStatementEndpoint  = "/account-api/v3.0/accounts/fullStatement"
 )
 
 func (c *Client) GetAccountBalance(req AccountBalanceRequest) (*AccountBalanceResponse, error) {
@@ -52,6 +52,7 @@ func (c *Client) GetMiniStatement(req MiniStatementRequest) (*MiniStatementRespo
 		return nil, fmt.Errorf("countryCode and accountId are required")
 	}
 
+
 	endpoint := fmt.Sprintf("%s/%s/%s", miniStatementEndpoint, req.CountryCode, req.AccountID)
 	
 	queryParams := make([]string, 0)
@@ -66,7 +67,8 @@ func (c *Client) GetMiniStatement(req MiniStatementRequest) (*MiniStatementRespo
 		endpoint = fmt.Sprintf("%s?%s", endpoint, joinQueryParams(queryParams))
 	}
 
-	signatureData := req.AccountID
+	// Updated signature generation according to API documentation
+	signatureData := req.CountryCode + req.AccountID
 
 	respBody, err := c.SendRequest(http.MethodGet, endpoint, nil, signatureData)
 	if err != nil {
@@ -86,25 +88,19 @@ func (c *Client) GetFullStatement(req FullStatementRequest) (*FullStatementRespo
 		return nil, fmt.Errorf("countryCode, accountId, fromDate, and toDate are required")
 	}
 
-	endpoint := fmt.Sprintf("%s/%s/%s", fullStatementEndpoint, req.CountryCode, req.AccountID)
+	// Updated to use POST method with request body instead of query parameters
+	endpoint := fullStatementEndpoint
 	
-	queryParams := []string{
-		fmt.Sprintf("fromDate=%s", req.FromDate),
-		fmt.Sprintf("toDate=%s", req.ToDate),
+	// Create request body
+	requestBody, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling request: %w", err)
 	}
-	
-	if req.AccountType != "" {
-		queryParams = append(queryParams, fmt.Sprintf("accountType=%s", req.AccountType))
-	}
-	if req.CurrencyCode != "" {
-		queryParams = append(queryParams, fmt.Sprintf("currencyCode=%s", req.CurrencyCode))
-	}
-	
-	endpoint = fmt.Sprintf("%s?%s", endpoint, joinQueryParams(queryParams))
 
-	signatureData := req.AccountID
+	// Updated signature generation according to API documentation
+	signatureData := req.AccountID + req.CountryCode + req.ToDate
 
-	respBody, err := c.SendRequest(http.MethodGet, endpoint, nil, signatureData)
+	respBody, err := c.SendRequest(http.MethodPost, endpoint, requestBody, signatureData)
 	if err != nil {
 		return nil, err
 	}

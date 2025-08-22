@@ -1,5 +1,9 @@
 package api
 
+import (
+	"encoding/json"
+)
+
 type CommonResponse struct {
 	Status    bool   `json:"status"`
 	Code      int    `json:"code"`
@@ -9,10 +13,10 @@ type CommonResponse struct {
 }
 
 type AccountBalanceRequest struct {
-	CountryCode    string `json:"countryCode"`
-	AccountID      string `json:"accountId"`
-	AccountType    string `json:"accountType,omitempty"`
-	CurrencyCode   string `json:"currencyCode,omitempty"`
+	CountryCode  string `json:"countryCode"`
+	AccountID    string `json:"accountId"`
+	AccountType  string `json:"accountType,omitempty"`
+	CurrencyCode string `json:"currencyCode,omitempty"`
 }
 
 type AccountBalanceResponse struct {
@@ -27,20 +31,18 @@ type AccountBalanceResponse struct {
 }
 
 type MiniStatementRequest struct {
-	CountryCode    string `json:"countryCode"`
-	AccountID      string `json:"accountId"`
-	AccountType    string `json:"accountType,omitempty"`
-	CurrencyCode   string `json:"currencyCode,omitempty"`
+	CountryCode  string `json:"countryCode"`
+	AccountID    string `json:"accountId"`
+	AccountType  string `json:"accountType,omitempty"`
+	CurrencyCode string `json:"currencyCode,omitempty"`
 }
 
-type Transaction struct {
-	TransactionID   string `json:"transactionID"`
-	TransactionDate string `json:"transactionDate"`
-	ValueDate       string `json:"valueDate"`
-	Narration       string `json:"narration"`
-	Amount          string `json:"amount"`
-	DebitOrCredit   string `json:"debitOrCredit"`
-	RunningBalance  string `json:"runningBalance"`
+type MiniStatementTransaction struct {
+	ChequeNumber string `json:"chequeNumber"`
+	Date         string `json:"date"`
+	Description  string `json:"description"`
+	Amount       string `json:"amount"`
+	Type         string `json:"type"` // "Debit" or "Credit"
 }
 
 type MiniStatementResponse struct {
@@ -49,17 +51,37 @@ type MiniStatementResponse struct {
 	Message   string `json:"message"`
 	Reference string `json:"reference,omitempty"`
 	Data      struct {
-		Transactions []Transaction `json:"transactions"`
+		AccountNumber string                     `json:"accountNumber"`
+		Currency      string                     `json:"currency"`
+		Balance       json.Number                `json:"balance"`
+		Transactions  []MiniStatementTransaction `json:"transactions"`
 	} `json:"data"`
 }
 
 type FullStatementRequest struct {
-	CountryCode    string `json:"countryCode"`
-	AccountID      string `json:"accountId"`
-	AccountType    string `json:"accountType,omitempty"`
-	CurrencyCode   string `json:"currencyCode,omitempty"`
-	FromDate       string `json:"fromDate"`
-	ToDate         string `json:"toDate"`
+	CountryCode  string `json:"countryCode"`
+	AccountID    string `json:"accountId"`
+	AccountType  string `json:"accountType,omitempty"`
+	CurrencyCode string `json:"currencyCode,omitempty"`
+	FromDate     string `json:"fromDate"`
+	ToDate       string `json:"toDate"`
+	Limit        int    `json:"limit,omitempty"`
+	Offset       int    `json:"offset,omitempty"`
+}
+
+type FullStatementTransaction struct {
+	Reference      string `json:"reference"`
+	Date           string `json:"date"`
+	Amount         string `json:"amount"`
+	Serial         string `json:"serial"`
+	Description    string `json:"description"`
+	PostedDateTime string `json:"postedDateTime"`
+	Type           string `json:"type"`
+	RunningBalance struct {
+		Amount   json.Number `json:"amount"`
+		Currency string      `json:"currency"`
+	} `json:"runningBalance"`
+	TransactionId  string `json:"transactionId"`
 }
 
 type FullStatementResponse struct {
@@ -68,7 +90,10 @@ type FullStatementResponse struct {
 	Message   string `json:"message"`
 	Reference string `json:"reference,omitempty"`
 	Data      struct {
-		Transactions []Transaction `json:"transactions"`
+		Balance       json.Number             `json:"balance"`
+		Currency      string                  `json:"currency"`
+		AccountNumber string                  `json:"accountNumber"`
+		Transactions  []FullStatementTransaction `json:"transactions"`
 	} `json:"data"`
 }
 
@@ -95,12 +120,12 @@ type Destination struct {
 
 // Transfer represents the transfer details in a money transfer
 type Transfer struct {
-	Type          string `json:"type"`
-	Amount        string `json:"amount"`
-	CurrencyCode  string `json:"currencyCode"`
-	Reference     string `json:"reference"`
-	Date          string `json:"date"`
-	Description   string `json:"description"`
+	Type         string `json:"type"`
+	Amount       string `json:"amount"`
+	CurrencyCode string `json:"currencyCode"`
+	Reference    string `json:"reference"`
+	Date         string `json:"date"`
+	Description  string `json:"description"`
 }
 
 // SendMoneyRequest represents a request to send money
@@ -126,15 +151,15 @@ type SendMoneyResponse struct {
 
 // MobileWalletRequest represents a request to send money to mobile wallet
 type MobileWalletRequest struct {
-	Source      Source      `json:"source"`
+	Source      Source `json:"source"`
 	Destination struct {
-		Type          string `json:"type"`
-		CountryCode   string `json:"countryCode"`
-		Name          string `json:"name"`
-		MobileNumber  string `json:"mobileNumber"`
-		WalletName    string `json:"walletName"`
+		Type         string `json:"type"`
+		CountryCode  string `json:"countryCode"`
+		Name         string `json:"name"`
+		MobileNumber string `json:"mobileNumber"`
+		WalletName   string `json:"walletName"`
 	} `json:"destination"`
-	Transfer    struct {
+	Transfer struct {
 		Type         string `json:"type"`
 		Amount       string `json:"amount"`
 		CurrencyCode string `json:"currencyCode"`
@@ -240,17 +265,17 @@ type KYCResponse struct {
 
 // ForexRatesRequest represents a request to get forex rates
 type ForexRatesRequest struct {
-	CountryCode   string `json:"countryCode"`
-	CurrencyCode  string `json:"currencyCode"`
-	BaseCurrency  string `json:"baseCurrency,omitempty"`
+	CountryCode  string `json:"countryCode"`
+	CurrencyCode string `json:"currencyCode"`
+	BaseCurrency string `json:"baseCurrency,omitempty"`
 }
 
 // ForexRate represents a forex rate
 type ForexRate struct {
-	CurrencyCode  string `json:"currencyCode"`
-	BuyRate       string `json:"buyRate"`
-	SellRate      string `json:"sellRate"`
-	MeanRate      string `json:"meanRate"`
+	CurrencyCode string `json:"currencyCode"`
+	BuyRate      string `json:"buyRate"`
+	SellRate     string `json:"sellRate"`
+	MeanRate     string `json:"meanRate"`
 }
 
 // ForexRatesResponse represents the response for forex rates
