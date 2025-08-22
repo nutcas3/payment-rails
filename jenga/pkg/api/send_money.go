@@ -9,6 +9,8 @@ import (
 const (
 	remittanceEndpoint = "/transaction-api/v3.0/remittance"
 	mobileWalletEndpoint = "/transaction-api/v3.0/remittance/mobile"
+	rtgsEndpoint = "/transaction-api/v3.0/remittance/rtgs"
+	swiftEndpoint = "/transaction-api/v3.0/remittance/swift"
 )
 
 func (c *Client) SendMoney(req SendMoneyRequest) (*SendMoneyResponse, error) {
@@ -18,9 +20,17 @@ func (c *Client) SendMoney(req SendMoneyRequest) (*SendMoneyResponse, error) {
 		return nil, fmt.Errorf("missing required fields in SendMoneyRequest")
 	}
 
+	endpoint := remittanceEndpoint
+	switch req.Transfer.Type {
+	case TransferTypeRTGS:
+		endpoint = rtgsEndpoint
+	case TransferTypeSWIFT:
+		endpoint = swiftEndpoint
+	}
+
 	signatureData := req.Source.AccountNumber + req.Transfer.Amount + req.Transfer.CurrencyCode + req.Transfer.Reference
 
-	respBody, err := c.SendRequest(http.MethodPost, remittanceEndpoint, req, signatureData)
+	respBody, err := c.SendRequest(http.MethodPost, endpoint, req, signatureData)
 	if err != nil {
 		return nil, err
 	}
