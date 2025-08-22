@@ -49,12 +49,17 @@ func main() {
 	fmt.Printf("Result Code: %s\n", response.ResultCode)
 	fmt.Printf("Result Description: %s\n", response.ResultDesc)
 	
-	// Interpret the response
-	if response.ResultCode == "0" {
+	// Interpret the response using tagged switch
+	switch response.ResultCode {
+	case "0":
 		fmt.Println("\nTransaction was successful!")
-	} else if response.ResultCode == "1032" {
+	case "1032":
 		fmt.Println("\nTransaction was cancelled by the user")
-	} else {
-		fmt.Println("\nTransaction failed or is still being processed")
+	case "1037":
+		fmt.Println("\nTimeout in completing the transaction")
+	case "1":
+		fmt.Println("\nInsufficient funds in the customer's account")
+	default:
+		fmt.Printf("\nTransaction failed or is still being processed (Code: %s)", response.ResultCode)
 	}
 }
