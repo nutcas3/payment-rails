@@ -43,9 +43,13 @@ func main() {
 	if err != nil {
 		log.Printf("Error getting mini statement: %v", err)
 	} else {
-		fmt.Printf("Mini Statement: %d transactions\n", len(miniStatement.Data.Transactions))
+		fmt.Printf("Mini Statement: Account %s, Balance %s %s, %d transactions\n", 
+			miniStatement.Data.AccountNumber, 
+			miniStatement.Data.Balance, 
+			miniStatement.Data.Currency, 
+			len(miniStatement.Data.Transactions))
 		for i, tx := range miniStatement.Data.Transactions {
-			fmt.Printf("%d. %s: %s %s\n", i+1, tx.TransactionDate, tx.Amount, tx.Narration)
+			fmt.Printf("%d. %s: %s %s (%s)\n", i+1, tx.Date, tx.Amount, tx.Description, tx.Type)
 		}
 	}
 
