@@ -58,7 +58,7 @@ func main() {
 		fmt.Println("\nFailed to cancel invoice. Please check your request parameters.")
 	}
 
-	fmt.Println("\n------------------------------------\n")
+	fmt.Println("\n------------------------------------")
 
 	// Example 2: Cancel multiple invoices in bulk
 	bulkRequests := []mpesa.BillManagerCancelInvoiceRequest{
