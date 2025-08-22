@@ -265,6 +265,71 @@ crossBorderReq := api.SendMoneyRequest{
 response, err := client.SendInternalBankTransfer(crossBorderReq)
 ```
 
+## Account Services
+
+### Account Validation
+
+Validate Equity bank accounts across different countries.
+
+```go
+// Create an account validation request
+validateReq := api.AccountValidateRequest{
+    CountryCode:     "UG",            // Country code (e.g., UG for Uganda)
+    AccountNumber:   "1036200681230", // Account number to validate
+    AccountFullName: "DICKSON MAITEI", // Full name on the account
+    ChargeAccount:   "1036200681230", // Optional: account to charge for this operation
+}
+
+// Validate the account
+response, err := client.ValidateAccount(validateReq)
+if err != nil {
+    log.Fatalf("Error validating account: %v", err)
+}
+
+// Process the response
+if response.Status {
+    fmt.Println("Account validation successful!")
+    fmt.Printf("Full Name: %s\n", response.Data.Account.FullNames)
+    fmt.Printf("Account Number: %s\n", response.Data.Account.AccountNumber)
+    fmt.Printf("Currency: %s\n", response.Data.Account.Currency)
+    fmt.Printf("Account Status: %s\n", response.Data.Account.Status)
+} else {
+    fmt.Printf("Account validation failed. Code: %d, Message: %s\n", response.Code, response.Message)
+}
+```
+
+### Account Balance
+
+```go
+// Get account balance
+balance, err := client.GetAccountBalance(api.AccountBalanceRequest{
+    CountryCode: "KE",
+    AccountID:   "0011547896523",
+})
+```
+
+### Mini Statement
+
+```go
+// Get mini statement
+miniStatement, err := client.GetMiniStatement(api.MiniStatementRequest{
+    CountryCode: "KE",
+    AccountID:   "0011547896523",
+})
+```
+
+### Full Statement
+
+```go
+// Get full statement
+fullStatement, err := client.GetFullStatement(api.FullStatementRequest{
+    CountryCode: "KE",
+    AccountID:   "0011547896523",
+    FromDate:    "2023-01-01",
+    ToDate:      "2023-01-31",
+})
+```
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
