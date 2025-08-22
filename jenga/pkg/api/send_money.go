@@ -8,7 +8,7 @@ import (
 
 const (
 	remittanceEndpoint = "/transaction-api/v3.0/remittance"
-	mobileWalletEndpoint = "/transaction-api/v3.0/remittance/mobile"
+	mobileWalletEndpoint = "/transaction-api/v3.0/remittance/sendmobile"
 	rtgsEndpoint = "/transaction-api/v3.0/remittance/rtgs"
 	swiftEndpoint = "/transaction-api/v3.0/remittance/swift"
 )
@@ -46,7 +46,8 @@ func (c *Client) SendMoney(req SendMoneyRequest) (*SendMoneyResponse, error) {
 func (c *Client) SendToMobileWallet(req MobileWalletRequest) (*MobileWalletResponse, error) {
 	if req.Source.CountryCode == "" || req.Source.AccountNumber == "" || 
 	   req.Destination.CountryCode == "" || req.Destination.MobileNumber == "" || req.Destination.WalletName == "" ||
-	   req.Transfer.Amount == "" || req.Transfer.CurrencyCode == "" || req.Transfer.Reference == "" {
+	   req.Transfer.Amount == "" || req.Transfer.CurrencyCode == "" || req.Transfer.Reference == "" ||
+	   req.Transfer.CallbackUrl == "" {
 		return nil, fmt.Errorf("missing required fields in MobileWalletRequest")
 	}
 
