@@ -11,6 +11,7 @@ const (
 	accountBalanceEndpoint = "/account-api/v3.0/accounts/balances"
 	miniStatementEndpoint  = "/account-api/v3.0/accounts/miniStatement"
 	fullStatementEndpoint  = "/account-api/v3.0/accounts/fullStatement"
+	accountValidateEndpoint = "/account-api/v3.0/account/validate"
 )
 
 func (c *Client) GetAccountBalance(req AccountBalanceRequest) (*AccountBalanceResponse, error) {
@@ -115,4 +116,29 @@ func (c *Client) GetFullStatement(req FullStatementRequest) (*FullStatementRespo
 
 func joinQueryParams(params []string) string {
 	return strings.Join(params, "&")
+}
+
+func (c *Client) ValidateAccount(req AccountValidateRequest) (*AccountValidateResponse, error) {
+	if req.CountryCode == "" || req.AccountNumber == "" || req.AccountFullName == "" {
+		return nil, fmt.Errorf("countryCode, accountNumber, and accountFullName are required")
+	}
+
+	requestBody, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling request: %w", err)
+	}
+
+	signatureData := req.CountryCode + req.AccountNumber + req.AccountFullName
+
+	respBody, err := c.SendRequest(http.MethodPost, accountValidateEndpoint, requestBody, signatureData)
+	if err != nil {
+		return nil, err
+	}
+
+	var response AccountValidateResponse
+	if err := json.Unmarshal(respBody, &response); err != nil {
+		return nil, fmt.Errorf("error parsing account validation response: %w", err)
+	}
+
+	return &response, nil
 }

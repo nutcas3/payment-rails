@@ -31,6 +31,10 @@ func (c *Client) GetFullStatement(req api.FullStatementRequest) (*api.FullStatem
 	return c.apiClient.GetFullStatement(req)
 }
 
+func (c *Client) ValidateAccount(req api.AccountValidateRequest) (*api.AccountValidateResponse, error) {
+	return c.apiClient.ValidateAccount(req)
+}
+
 
 func (c *Client) SendMoney(req api.SendMoneyRequest) (*api.SendMoneyResponse, error) {
 	return c.apiClient.SendMoney(req)

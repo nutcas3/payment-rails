@@ -289,3 +289,26 @@ type ForexRatesResponse struct {
 		Rates        []ForexRate `json:"rates"`
 	} `json:"data"`
 }
+
+// AccountValidateRequest represents the request to validate an account
+type AccountValidateRequest struct {
+	CountryCode     string `json:"countryCode"`
+	AccountNumber   string `json:"accountNumber"`
+	AccountFullName string `json:"accountFullName"`
+	ChargeAccount   string `json:"chargeAccount,omitempty"`
+}
+
+// AccountValidateResponse represents the response from account validation
+type AccountValidateResponse struct {
+	Status  bool   `json:"status"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		Account struct {
+			FullNames     string `json:"fullNames"`
+			Currency      string `json:"currency"`
+			AccountNumber string `json:"accountNumber"`
+			Status        string `json:"status"`
+		} `json:"account"`
+	} `json:"data"`
+}
