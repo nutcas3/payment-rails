@@ -314,7 +314,7 @@ func utilityExamples(client *kcb.Client) {
 		1000.0,           // Amount
 		"KES",            // Currency
 		"BILL123456",     // Reference
-		"254712345678"    // Phone number for notifications
+		"254712345678",   // Phone number for notifications
 	)
 	if err != nil {
 		log.Printf("Failed to pay utility bill: %v", err)
