@@ -6,12 +6,13 @@ A Go client for the Equity (Finserve) Jenga V3 API. This SDK provides a simple i
 
 - Authentication and Token Management
 - Send Money (Within Equity, To Mobile Wallets, To Other Banks, RTGS, SWIFT)
-- Receive Money
-- Account Services (Balance Inquiry, Mini Statement, Full Statement)
+- Receive Money and Query Transactions
+- Account Services (Balance Inquiry, Mini Statement, Full Statement, Account Validation)
 - Bill Payments
 - Airtime Purchase
-- KYC and Identity Verification
+- RegTech Services (KYC, AML, Customer Due Diligence)
 - Forex Rates
+- Webhook/Callback Handling for Notifications
 
 ## Pre-requisites
 
@@ -328,6 +329,255 @@ fullStatement, err := client.GetFullStatement(api.FullStatementRequest{
     FromDate:    "2023-01-01",
     ToDate:      "2023-01-31",
 })
+```
+
+## Receive Money
+
+Receive money from various sources into an Equity Bank account.
+
+```go
+// Create a receive money request
+receiveReq := api.ReceiveMoneyRequest{
+    MerchantCode:    "1234567",                // Your merchant code
+    MerchantAccount: "0011547896523",          // Account to receive funds
+    CustomerName:    "John Doe",               // Name of the customer sending money
+    Amount:          "500.00",                 // Amount to receive
+    CurrencyCode:    "KES",                    // Currency code
+    Reference:       jenga.GenerateReference(), // Unique reference
+    Description:     "Payment for services",    // Description
+}
+
+// Process the receive money request
+response, err := client.ReceiveMoney(receiveReq)
+if err != nil {
+    log.Fatalf("Error receiving money: %v", err)
+}
+
+// Check the response
+if response.Status {
+    fmt.Printf("Transaction ID: %s\n", response.Data.TransactionID)
+    fmt.Printf("Status: %s\n", response.Data.Status)
+} else {
+    fmt.Printf("Failed to receive money: %s\n", response.Message)
+}
+```
+
+### Query Receive Money Transaction
+
+```go
+// Create a query request
+queryReq := api.ReceiveMoneyQueryRequest{
+    MerchantCode:  "1234567",     // Your merchant code
+    TransactionID: "TRX12345678", // Transaction ID from the receive money response
+}
+
+// Query the transaction status
+response, err := client.QueryReceiveMoneyTransaction(queryReq)
+if err != nil {
+    log.Fatalf("Error querying transaction: %v", err)
+}
+
+// Process the response
+fmt.Printf("Transaction Status: %s\n", response.Data.Status)
+fmt.Printf("Transaction Date: %s\n", response.Data.TransactionDate)
+```
+
+## Airtime Purchase
+
+Purchase airtime for mobile numbers across different telcos.
+
+```go
+// Create an airtime purchase request
+airtimeReq := api.AirtimePurchaseRequest{
+    CustomerMobile: "254722000000", // Mobile number with country code
+    TelcoCode:      "SAF",         // Telco code (SAF for Safaricom, AIR for Airtel, etc.)
+    Amount:         "100",         // Amount of airtime to purchase
+    Reference:      jenga.GenerateReference(), // Unique reference
+    CurrencyCode:   "KES",        // Currency code
+}
+
+// Purchase airtime
+response, err := client.PurchaseAirtime(airtimeReq)
+if err != nil {
+    log.Fatalf("Error purchasing airtime: %v", err)
+}
+
+// Process the response
+if response.Status {
+    fmt.Println("Airtime purchase successful!")
+} else {
+    fmt.Printf("Airtime purchase failed: %s\n", response.Message)
+}
+```
+
+## RegTech Services
+
+### KYC Verification
+
+```go
+// Create a KYC verification request
+kycReq := api.KYCRequest{
+    DocumentType:   "ALIENID", // ID, PASSPORT, ALIENID, etc.
+    DocumentNumber: "AB123456",
+    CountryCode:    "KE",
+    FirstName:      "John",     // Optional
+    LastName:       "Doe",      // Optional
+    DateOfBirth:    "1990-01-01", // Optional
+}
+
+// Verify identity
+response, err := client.VerifyIdentity(kycReq)
+if err != nil {
+    log.Fatalf("Error verifying identity: %v", err)
+}
+
+// Process the response
+if response.Status {
+    fmt.Printf("Verified: %t\n", response.Data.Verified)
+    fmt.Printf("Full Name: %s\n", response.Data.FullName)
+} else {
+    fmt.Printf("Verification failed: %s\n", response.Message)
+}
+```
+
+### AML Screening
+
+```go
+// Create an AML screening request
+amlReq := api.AMLScreeningRequest{
+    FirstName:      "John",
+    LastName:       "Doe",
+    CountryCode:    "KE",
+    DateOfBirth:    "1990-01-01", // Optional
+    DocumentType:   "ALIENID",    // Optional
+    DocumentNumber: "AB123456",   // Optional
+    Reference:      jenga.GenerateReference(), // Optional
+}
+
+// Perform AML screening
+response, err := client.PerformAMLScreening(amlReq)
+if err != nil {
+    log.Fatalf("Error performing AML screening: %v", err)
+}
+
+// Process the response
+if response.Status {
+    fmt.Printf("Risk Score: %d\n", response.Data.RiskScore)
+    fmt.Printf("Risk Level: %s\n", response.Data.RiskLevel)
+    fmt.Printf("Match Status: %t\n", response.Data.MatchStatus)
+} else {
+    fmt.Printf("AML screening failed: %s\n", response.Message)
+}
+```
+
+### Customer Due Diligence (CDD)
+
+```go
+// Create a CDD request
+cddReq := api.CDDRequest{
+    CustomerID:     "CUS12345",
+    CountryCode:    "KE",
+    RiskLevel:      "medium",    // Optional: low, medium, high
+    BusinessType:   "retail",    // Optional
+    DocumentType:   "ALIENID",   // Optional
+    DocumentNumber: "AB123456",  // Optional
+    Reference:      jenga.GenerateReference(), // Optional
+}
+
+// Perform Customer Due Diligence
+response, err := client.PerformCustomerDueDiligence(cddReq)
+if err != nil {
+    log.Fatalf("Error performing CDD: %v", err)
+}
+
+// Process the response
+if response.Status {
+    fmt.Printf("Risk Score: %d\n", response.Data.RiskScore)
+    fmt.Printf("Risk Level: %s\n", response.Data.RiskLevel)
+    fmt.Printf("Verification Status: %s\n", response.Data.VerificationStatus)
+} else {
+    fmt.Printf("CDD failed: %s\n", response.Message)
+}
+```
+
+## Forex Rates
+
+Get foreign exchange rates for different currencies.
+
+```go
+// Create a forex rates request
+forexReq := api.ForexRatesRequest{
+    CountryCode:  "KE",  // Country code
+    CurrencyCode: "USD", // Currency code
+    BaseCurrency: "KES", // Optional: Base currency for conversion
+}
+
+// Get forex rates
+response, err := client.GetForexRates(forexReq)
+if err != nil {
+    log.Fatalf("Error getting forex rates: %v", err)
+}
+
+// Process the response
+if response.Status {
+    fmt.Printf("Buy Rate: %s\n", response.Data.BuyRate)
+    fmt.Printf("Sell Rate: %s\n", response.Data.SellRate)
+} else {
+    fmt.Printf("Failed to get forex rates: %s\n", response.Message)
+}
+```
+
+## Webhook Handling
+
+Handle webhook notifications from Jenga API for real-time updates.
+
+```go
+// Initialize the client and set webhook secret
+client, err := jenga.NewClient(apiKey, username, password, privateKeyPath, "sandbox")
+if err != nil {
+    log.Fatalf("Error initializing Jenga client: %v", err)
+}
+
+// Set webhook secret for signature validation
+client.SetWebhookSecret(webhookSecret)
+
+// Define webhook handlers
+handlers := api.WebhookHandlers{
+    TransactionSuccessHandler: func(event *api.WebhookEvent) {
+        fmt.Println("Transaction successful:", event.ID)
+        // Parse transaction data
+        var data api.TransactionWebhookData
+        json.Unmarshal(event.Data, &data)
+        // Process the transaction data
+        fmt.Printf("Transaction ID: %s\n", data.TransactionID)
+        fmt.Printf("Amount: %s %s\n", data.Amount, data.Currency)
+    },
+    TransactionFailedHandler: func(event *api.WebhookEvent) {
+        fmt.Println("Transaction failed:", event.ID)
+        // Handle failed transaction
+    },
+    AccountUpdatedHandler: func(event *api.WebhookEvent) {
+        fmt.Println("Account updated:", event.ID)
+        // Handle account update
+    },
+    KYCUpdatedHandler: func(event *api.WebhookEvent) {
+        fmt.Println("KYC updated:", event.ID)
+        // Handle KYC update
+    },
+    DefaultHandler: func(event *api.WebhookEvent) {
+        fmt.Printf("Received unhandled event type: %s\n", event.EventType)
+    },
+}
+
+// Set up HTTP handler for webhooks
+http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
+    if err := client.HandleWebhook(w, r, handlers); err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+})
+
+// Start the server
+http.ListenAndServe(":8080", nil)
 ```
 
 ## License
