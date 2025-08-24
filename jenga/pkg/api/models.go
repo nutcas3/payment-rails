@@ -252,12 +252,69 @@ type KYCResponse struct {
 		MiddleName     string `json:"middleName"`
 		LastName       string `json:"lastName"`
 		FullName       string `json:"fullName"`
-		Gender         string `json:"gender"`
-		DateOfBirth    string `json:"dateOfBirth"`
 		DocumentNumber string `json:"documentNumber"`
 		DocumentType   string `json:"documentType"`
-		DocumentSerial string `json:"documentSerial"`
-		Photo          string `json:"photo"`
+		DateOfBirth    string `json:"dateOfBirth"`
+		Gender         string `json:"gender"`
+		PhotoUrl       string `json:"photoUrl"`
+		Verified       bool   `json:"verified"`
+	} `json:"data"`
+}
+
+// AMLScreeningRequest represents a request for AML screening
+type AMLScreeningRequest struct {
+	FirstName      string `json:"firstName"`
+	LastName       string `json:"lastName"`
+	DateOfBirth    string `json:"dateOfBirth,omitempty"`
+	CountryCode    string `json:"countryCode"`
+	DocumentType   string `json:"documentType,omitempty"`
+	DocumentNumber string `json:"documentNumber,omitempty"`
+	Reference      string `json:"reference,omitempty"`
+}
+
+// AMLScreeningResponse represents the response for AML screening
+type AMLScreeningResponse struct {
+	Status    bool   `json:"status"`
+	Code      int    `json:"code"`
+	Message   string `json:"message"`
+	Reference string `json:"reference,omitempty"`
+	Data      struct {
+		RiskScore     int    `json:"riskScore"`
+		RiskLevel     string `json:"riskLevel"`
+		MatchStatus   bool   `json:"matchStatus"`
+		SanctionLists []struct {
+			ListName    string `json:"listName"`
+			MatchScore  int    `json:"matchScore"`
+			Description string `json:"description"`
+		} `json:"sanctionLists,omitempty"`
+		ScreeningID  string `json:"screeningId"`
+	} `json:"data"`
+}
+
+// CDDRequest represents a request for Customer Due Diligence
+type CDDRequest struct {
+	CustomerID     string `json:"customerId"`
+	CountryCode    string `json:"countryCode"`
+	RiskLevel      string `json:"riskLevel,omitempty"` // low, medium, high
+	BusinessType   string `json:"businessType,omitempty"`
+	DocumentType   string `json:"documentType,omitempty"`
+	DocumentNumber string `json:"documentNumber,omitempty"`
+	Reference      string `json:"reference,omitempty"`
+}
+
+// CDDResponse represents the response for Customer Due Diligence
+type CDDResponse struct {
+	Status    bool   `json:"status"`
+	Code      int    `json:"code"`
+	Message   string `json:"message"`
+	Reference string `json:"reference,omitempty"`
+	Data      struct {
+		CustomerID     string `json:"customerId"`
+		RiskScore     int    `json:"riskScore"`
+		RiskLevel     string `json:"riskLevel"`
+		VerificationStatus string `json:"verificationStatus"`
+		RecommendedActions []string `json:"recommendedActions,omitempty"`
+		LastUpdated   string `json:"lastUpdated"`
 	} `json:"data"`
 }
 
@@ -306,9 +363,61 @@ type AccountValidateResponse struct {
 	Data    struct {
 		Account struct {
 			FullNames     string `json:"fullNames"`
-			Currency      string `json:"currency"`
 			AccountNumber string `json:"accountNumber"`
+			Currency      string `json:"currency"`
 			Status        string `json:"status"`
 		} `json:"account"`
+	} `json:"data"`
+}
+
+// ReceiveMoneyRequest represents a request to receive money
+type ReceiveMoneyRequest struct {
+	MerchantCode    string `json:"merchantCode"`
+	MerchantAccount string `json:"merchantAccount"`
+	CustomerAccount string `json:"customerAccount,omitempty"`
+	CustomerName    string `json:"customerName"`
+	CustomerEmail   string `json:"customerEmail,omitempty"`
+	CustomerPhone   string `json:"customerPhone,omitempty"`
+	Amount          string `json:"amount"`
+	CurrencyCode    string `json:"currencyCode"`
+	Reference       string `json:"reference"`
+	Description     string `json:"description"`
+	CallbackUrl     string `json:"callbackUrl,omitempty"`
+}
+
+// ReceiveMoneyResponse represents the response from the receive money API
+type ReceiveMoneyResponse struct {
+	Status    bool   `json:"status"`
+	Code      int    `json:"code"`
+	Message   string `json:"message"`
+	Reference string `json:"reference,omitempty"`
+	Data      struct {
+		TransactionID string `json:"transactionId"`
+		Status        string `json:"status"`
+		Description   string `json:"description,omitempty"`
+		CheckoutUrl   string `json:"checkoutUrl,omitempty"`
+	} `json:"data"`
+}
+
+// ReceiveMoneyQueryRequest represents a request to query a receive money transaction
+type ReceiveMoneyQueryRequest struct {
+	MerchantCode  string `json:"merchantCode"`
+	TransactionID string `json:"transactionId"`
+}
+
+// ReceiveMoneyQueryResponse represents the response from the receive money query API
+type ReceiveMoneyQueryResponse struct {
+	Status    bool   `json:"status"`
+	Code      int    `json:"code"`
+	Message   string `json:"message"`
+	Reference string `json:"reference,omitempty"`
+	Data      struct {
+		TransactionID string `json:"transactionId"`
+		Status        string `json:"status"`
+		Amount        string `json:"amount"`
+		CurrencyCode  string `json:"currencyCode"`
+		CustomerName  string `json:"customerName"`
+		Timestamp     string `json:"timestamp"`
+		Description   string `json:"description,omitempty"`
 	} `json:"data"`
 }
