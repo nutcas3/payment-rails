@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
+
+	"github.com/shopspring/decimal"
 	"payment-rails/absa"
 	"payment-rails/absa/pkg/api"
 )
@@ -35,7 +38,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error getting account balance: %v\n", err)
 	} else {
-		fmt.Printf("Account Balance: %s %s\n", balance.AvailableBalance, balance.Currency)
+		fmt.Printf("Account Balance: %s %s\n", api.FormatAmount(balance.AvailableBalance), balance.Currency)
 	}
 	fmt.Println()
 
@@ -57,11 +60,12 @@ func main() {
 	// Example 3: Send Money (Bank Transfer)
 	fmt.Println("Example 3: Send Money")
 	reference := absa.GenerateReference()
+	amount, _ := decimal.NewFromString("1000.00")
 	sendMoneyReq := api.SendMoneyRequest{
 		SourceAccount:       "1234567890",
 		DestinationAccount:  "0987654321",
 		DestinationBankCode: "123",
-		Amount:              "1000.00",
+		Amount:              amount,
 		Currency:            "KES",
 		Reference:           reference,
 		Description:         "Payment for services",
@@ -72,17 +76,32 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error sending money: %v\n", err)
 	} else {
-		fmt.Printf("Transaction ID: %s, Status: %s\n", sendMoney.TransactionID, sendMoney.Status)
+		// Display status using the defined constants
+		statusText := "Unknown"
+		switch sendMoney.Status {
+		case api.StatusSuccess:
+			statusText = "Successful"
+		case api.StatusPending:
+			statusText = "Pending"
+		case api.StatusFailed:
+			statusText = "Failed"
+		case api.StatusProcessing:
+			statusText = "Processing"
+		default:
+			statusText = sendMoney.Status
+		}
+		fmt.Printf("Transaction ID: %s, Status: %s\n", sendMoney.TransactionID, statusText)
 	}
 	fmt.Println()
 
 	// Example 4: Send to Mobile Wallet
 	fmt.Println("Example 4: Send to Mobile Wallet")
 	mobileRef := absa.GenerateReference()
+	mobileAmount, _ := decimal.NewFromString("500.00")
 	mobileReq := api.MobileWalletRequest{
 		SourceAccount: "1234567890",
 		MobileNumber:  "254712345678",
-		Amount:        "500.00",
+		Amount:        mobileAmount,
 		Currency:      "KES",
 		Reference:     mobileRef,
 		Description:   "Mobile money transfer",
@@ -102,12 +121,18 @@ func main() {
 	fmt.Println("Example 5: Query Transaction Status")
 	queryReq := api.TransactionQueryRequest{
 		Reference: reference,
+		FromDate:  time.Now().AddDate(0, 0, -7), // Query transactions from the last 7 days
+		ToDate:    time.Now(),
 	}
 	
 	query, err := client.QueryTransaction(queryReq)
 	if err != nil {
 		fmt.Printf("Error querying transaction: %v\n", err)
 	} else {
-		fmt.Printf("Transaction Status: %s, Amount: %s %s\n", query.Status, query.Amount, query.Currency)
+		fmt.Printf("Transaction Status: %s, Amount: %s %s, Date: %s\n", 
+		query.Status, 
+		api.FormatAmount(query.Amount), 
+		query.Currency, 
+		query.Timestamp.Format(time.RFC3339))
 	}
 }

@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 // Account Balance
@@ -18,6 +21,11 @@ func (c *Client) GetAccountBalance(req AccountBalanceRequest) (*AccountBalanceRe
 	var response AccountBalanceResponse
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing account balance response: %w", err)
+	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
 	}
 
 	return &response, nil
@@ -36,6 +44,11 @@ func (c *Client) GetMiniStatement(req MiniStatementRequest) (*MiniStatementRespo
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing mini statement response: %w", err)
 	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
+	}
 
 	return &response, nil
 }
@@ -52,6 +65,11 @@ func (c *Client) GetFullStatement(req FullStatementRequest) (*FullStatementRespo
 	var response FullStatementResponse
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing full statement response: %w", err)
+	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
 	}
 
 	return &response, nil
@@ -70,6 +88,11 @@ func (c *Client) ValidateAccount(req AccountValidateRequest) (*AccountValidateRe
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing account validation response: %w", err)
 	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
+	}
 
 	return &response, nil
 }
@@ -86,6 +109,11 @@ func (c *Client) SendMoney(req SendMoneyRequest) (*SendMoneyResponse, error) {
 	var response SendMoneyResponse
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing send money response: %w", err)
+	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
 	}
 
 	return &response, nil
@@ -104,6 +132,11 @@ func (c *Client) SendInternalBankTransfer(req SendMoneyRequest) (*SendMoneyRespo
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing internal transfer response: %w", err)
 	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
+	}
 
 	return &response, nil
 }
@@ -120,6 +153,11 @@ func (c *Client) SendToMobileWallet(req MobileWalletRequest) (*MobileWalletRespo
 	var response MobileWalletResponse
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing mobile wallet response: %w", err)
+	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
 	}
 
 	return &response, nil
@@ -138,6 +176,11 @@ func (c *Client) PayBill(req BillPaymentRequest) (*BillPaymentResponse, error) {
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing bill payment response: %w", err)
 	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
+	}
 
 	return &response, nil
 }
@@ -154,6 +197,16 @@ func (c *Client) ReceiveMoney(req ReceiveMoneyRequest) (*ReceiveMoneyResponse, e
 	var response ReceiveMoneyResponse
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing receive money response: %w", err)
+	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
+	}
+	
+	// Set expiry date if not provided but expiry minutes is set in request
+	if response.ExpiryDate.IsZero() && req.ExpiryMinutes > 0 {
+		response.ExpiryDate = time.Now().UTC().Add(time.Duration(req.ExpiryMinutes) * time.Minute)
 	}
 
 	return &response, nil
@@ -172,8 +225,21 @@ func (c *Client) QueryTransaction(req TransactionQueryRequest) (*TransactionQuer
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing transaction query response: %w", err)
 	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
+	}
 
 	return &response, nil
+}
+
+// Helper function to validate amount is positive
+func validateAmount(amount decimal.Decimal) error {
+	if amount.LessThanOrEqual(decimal.Zero) {
+		return fmt.Errorf("amount must be greater than zero")
+	}
+	return nil
 }
 
 // Airtime Purchase
@@ -188,6 +254,11 @@ func (c *Client) PurchaseAirtime(req AirtimePurchaseRequest) (*AirtimePurchaseRe
 	var response AirtimePurchaseResponse
 	if err := json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error parsing airtime purchase response: %w", err)
+	}
+	
+	// Set timestamp to current time if not provided
+	if response.Timestamp.IsZero() {
+		response.Timestamp = time.Now().UTC()
 	}
 
 	return &response, nil

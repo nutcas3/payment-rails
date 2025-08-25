@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/patrickmn/go-cache"
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -123,6 +124,16 @@ func (c *Client) GetAuthToken() (string, error) {
 	c.TokenCache.Set(tokenCacheKey, authResp.AccessToken, time.Duration(authResp.ExpiresIn)*time.Second)
 
 	return authResp.AccessToken, nil
+}
+
+// FormatAmount formats a decimal amount to string with 2 decimal places
+func FormatAmount(amount decimal.Decimal) string {
+	return amount.StringFixed(2)
+}
+
+// ParseAmount parses a string amount to decimal.Decimal
+func ParseAmount(amount string) (decimal.Decimal, error) {
+	return decimal.NewFromString(amount)
 }
 
 func (c *Client) SendRequest(method, endpoint string, body interface{}) ([]byte, error) {
