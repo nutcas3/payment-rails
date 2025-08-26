@@ -96,3 +96,103 @@ func (c *Client) PurchaseAirtime(req api.AirtimePurchaseRequest) (*api.AirtimePu
 func GenerateReference() string {
 	return api.GenerateReference()
 }
+
+// Bulk Payments
+
+// ProcessBulkPayment processes multiple payments in a single batch
+func (c *Client) ProcessBulkPayment(req api.BulkPaymentRequest) (*api.BulkPaymentResponse, error) {
+	return c.apiClient.ProcessBulkPayment(req)
+}
+
+// GetBulkPaymentStatus retrieves the status of a bulk payment batch
+func (c *Client) GetBulkPaymentStatus(req api.BulkPaymentStatusRequest) (*api.BulkPaymentStatusResponse, error) {
+	return c.apiClient.GetBulkPaymentStatus(req)
+}
+
+// Standing Orders
+
+// CreateStandingOrder creates a new recurring payment
+func (c *Client) CreateStandingOrder(req api.StandingOrderRequest) (*api.StandingOrderResponse, error) {
+	return c.apiClient.CreateStandingOrder(req)
+}
+
+// GetStandingOrderStatus retrieves the status of a standing order
+func (c *Client) GetStandingOrderStatus(req api.StandingOrderStatusRequest) (*api.StandingOrderStatusResponse, error) {
+	return c.apiClient.GetStandingOrderStatus(req)
+}
+
+// CancelStandingOrder cancels an existing standing order
+func (c *Client) CancelStandingOrder(req api.StandingOrderCancelRequest) (*api.StandingOrderCancelResponse, error) {
+	return c.apiClient.CancelStandingOrder(req)
+}
+
+// ListStandingOrders retrieves all standing orders for an account
+func (c *Client) ListStandingOrders(req api.StandingOrderListRequest) (*api.StandingOrderListResponse, error) {
+	return c.apiClient.ListStandingOrders(req)
+}
+
+// Beneficiary Management
+
+// CreateBeneficiary creates a new beneficiary
+func (c *Client) CreateBeneficiary(req api.BeneficiaryCreateRequest) (*api.BeneficiaryCreateResponse, error) {
+	return c.apiClient.CreateBeneficiary(req)
+}
+
+// ListBeneficiaries retrieves all beneficiaries
+func (c *Client) ListBeneficiaries(req api.BeneficiaryListRequest) (*api.BeneficiaryListResponse, error) {
+	return c.apiClient.ListBeneficiaries(req)
+}
+
+// GetBeneficiary retrieves a specific beneficiary by ID
+func (c *Client) GetBeneficiary(req api.BeneficiaryGetRequest) (*api.BeneficiaryGetResponse, error) {
+	return c.apiClient.GetBeneficiary(req)
+}
+
+// UpdateBeneficiary updates an existing beneficiary
+func (c *Client) UpdateBeneficiary(req api.BeneficiaryUpdateRequest) (*api.BeneficiaryUpdateResponse, error) {
+	return c.apiClient.UpdateBeneficiary(req)
+}
+
+// DeleteBeneficiary deletes a beneficiary
+func (c *Client) DeleteBeneficiary(req api.BeneficiaryDeleteRequest) (*api.BeneficiaryDeleteResponse, error) {
+	return c.apiClient.DeleteBeneficiary(req)
+}
+
+// Foreign Exchange
+
+// GetForexRate retrieves the exchange rate between two currencies
+func (c *Client) GetForexRate(req api.ForexRateRequest) (*api.ForexRateResponse, error) {
+	return c.apiClient.GetForexRate(req)
+}
+
+// ProcessForexTransfer initiates a foreign currency transfer
+func (c *Client) ProcessForexTransfer(req api.ForexTransferRequest) (*api.ForexTransferResponse, error) {
+	return c.apiClient.ProcessForexTransfer(req)
+}
+
+// GetForexTransferStatus retrieves the status of a forex transfer
+func (c *Client) GetForexTransferStatus(req api.ForexTransferStatusRequest) (*api.ForexTransferStatusResponse, error) {
+	return c.apiClient.GetForexTransferStatus(req)
+}
+
+// Authentication Methods
+
+// RequestOTP requests a one-time password to be sent to a phone number or email
+func (c *Client) RequestOTP(req api.OTPRequest) (*api.OTPResponse, error) {
+	return c.apiClient.RequestOTP(req)
+}
+
+// VerifyOTP verifies a one-time password
+func (c *Client) VerifyOTP(req api.OTPVerifyRequest) (*api.OTPVerifyResponse, error) {
+	return c.apiClient.VerifyOTP(req)
+}
+
+// AuthenticateTransaction authenticates a transaction using the specified method
+func (c *Client) AuthenticateTransaction(req api.TransactionAuthRequest) (*api.TransactionAuthResponse, error) {
+	return c.apiClient.AuthenticateTransaction(req)
+}
+
+// RegisterDevice registers a new device for authentication
+func (c *Client) RegisterDevice(req api.DeviceRegistrationRequest) (*api.DeviceRegistrationResponse, error) {
+	return c.apiClient.RegisterDevice(req)
+}
