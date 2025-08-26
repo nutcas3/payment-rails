@@ -135,4 +135,44 @@ func main() {
 		query.Currency, 
 		query.Timestamp.Format(time.RFC3339))
 	}
+	fmt.Println()
+
+	// Example 6: Bulk Payments
+	fmt.Println("Example 6: Bulk Payments")
+	bulkRef := absa.GenerateReference()
+	bulkItems := []api.BulkPaymentItem{
+		{
+			DestinationAccount:  "1111222233",
+			DestinationBankCode: "123",
+			Amount:              decimal.NewFromFloat(500.00),
+			Reference:           absa.GenerateReference(),
+			Description:         "Salary payment",
+			BeneficiaryName:     "Employee One",
+		},
+		{
+			DestinationAccount:  "4444555566",
+			DestinationBankCode: "123",
+			Amount:              decimal.NewFromFloat(750.00),
+			Reference:           absa.GenerateReference(),
+			Description:         "Salary payment",
+			BeneficiaryName:     "Employee Two",
+		},
+	}
+	
+	bulkReq := api.BulkPaymentRequest{
+		SourceAccount:  "1234567890",
+		Currency:       "KES",
+		BatchReference: bulkRef,
+		Items:          bulkItems,
+	}
+	
+	bulkPayment, err := client.ProcessBulkPayment(bulkReq)
+	if err != nil {
+		fmt.Printf("Error processing bulk payment: %v\n", err)
+	} else {
+		fmt.Printf("Batch ID: %s, Status: %s, Success Count: %d\n", 
+			bulkPayment.BatchID, 
+			bulkPayment.Status, 
+			bulkPayment.SuccessCount)
+	}
 }
