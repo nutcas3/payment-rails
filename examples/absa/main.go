@@ -135,4 +135,170 @@ func main() {
 		query.Currency, 
 		query.Timestamp.Format(time.RFC3339))
 	}
+	fmt.Println()
+
+	// Example 6: Bulk Payments
+	fmt.Println("Example 6: Bulk Payments")
+	bulkRef := absa.GenerateReference()
+	bulkItems := []api.BulkPaymentItem{
+		{
+			DestinationAccount:  "1111222233",
+			DestinationBankCode: "123",
+			Amount:              decimal.NewFromFloat(500.00),
+			Reference:           absa.GenerateReference(),
+			Description:         "Salary payment",
+			BeneficiaryName:     "Employee One",
+		},
+		{
+			DestinationAccount:  "4444555566",
+			DestinationBankCode: "123",
+			Amount:              decimal.NewFromFloat(750.00),
+			Reference:           absa.GenerateReference(),
+			Description:         "Salary payment",
+			BeneficiaryName:     "Employee Two",
+		},
+	}
+	
+	bulkReq := api.BulkPaymentRequest{
+		SourceAccount:  "1234567890",
+		Currency:       "KES",
+		BatchReference: bulkRef,
+		Items:          bulkItems,
+	}
+	
+	bulkPayment, err := client.ProcessBulkPayment(bulkReq)
+	if err != nil {
+		fmt.Printf("Error processing bulk payment: %v\n", err)
+	} else {
+		fmt.Printf("Batch ID: %s, Status: %s, Success Count: %d\n", 
+			bulkPayment.BatchID, 
+			bulkPayment.Status, 
+			bulkPayment.SuccessCount)
+	}
+	fmt.Println()
+
+	// Example 7: Standing Orders
+	fmt.Println("Example 7: Standing Orders")
+	standingOrderRef := absa.GenerateReference()
+	standingOrderAmount, _ := decimal.NewFromString("1500.00")
+	startDate := time.Now().AddDate(0, 0, 1) // Start tomorrow
+	endDate := time.Now().AddDate(0, 6, 0)   // End after 6 months
+	
+	standingOrderReq := api.StandingOrderRequest{
+		SourceAccount:       "1234567890",
+		DestinationAccount:  "9876543210",
+		DestinationBankCode: "123",
+		Amount:              standingOrderAmount,
+		Currency:            "KES",
+		Reference:           standingOrderRef,
+		Description:         "Monthly rent payment",
+		Frequency:           api.FrequencyMonthly,
+		StartDate:           startDate,
+		EndDate:             endDate,
+		BeneficiaryName:     "Landlord Company Ltd",
+	}
+	
+	standingOrder, err := client.CreateStandingOrder(standingOrderReq)
+	if err != nil {
+		fmt.Printf("Error creating standing order: %v\n", err)
+	} else {
+		fmt.Printf("Standing Order ID: %s, Status: %s\n", 
+		standingOrder.OrderID, 
+		standingOrder.Status)
+	}
+	fmt.Println()
+
+	// Example 8: Beneficiary Management
+	fmt.Println("Example 8: Beneficiary Management")
+	beneficiaryReq := api.BeneficiaryCreateRequest{
+		Name:           "John Smith",
+		Type:           api.BeneficiaryTypeBank,
+		AccountNumber:  "9876543210",
+		BankCode:       "123",
+		BranchCode:     "001",
+		PhoneNumber:    "254712345678",
+	}
+	
+	beneficiary, err := client.CreateBeneficiary(beneficiaryReq)
+	if err != nil {
+		fmt.Printf("Error creating beneficiary: %v\n", err)
+	} else {
+		fmt.Printf("Status: %s\n", 
+		beneficiary.Status)
+	}
+	fmt.Println()
+
+	// Example 9: Foreign Exchange
+	fmt.Println("Example 9: Foreign Exchange")
+	forexRateReq := api.ForexRateRequest{
+		SourceCurrency:      "KES",
+		DestinationCurrency: "USD",
+	}
+	
+	forexRate, err := client.GetForexRate(forexRateReq)
+	if err != nil {
+		fmt.Printf("Error getting forex rate: %v\n", err)
+	} else {
+		fmt.Printf("Exchange Rate: 1 %s = %s %s\n", 
+		forexRate.SourceCurrency, 
+		api.FormatAmount(forexRate.Rate), 
+		forexRate.DestinationCurrency)
+	}
+	
+	// Process a forex transfer
+	forexAmount, _ := decimal.NewFromString("5000.00")
+	forexTransferReq := api.ForexTransferRequest{
+		SourceAccount:       "1234567890",
+		DestinationAccount:  "9876543210",
+		DestinationBankCode: "123",
+		SourceAmount:        forexAmount,
+		SourceCurrency:      "KES",
+		DestinationCurrency: "USD",
+		Reference:           absa.GenerateReference(),
+		Description:         "International payment",
+		BeneficiaryName:     "Global Supplier Inc.",
+	}
+	
+	forexTransfer, err := client.ProcessForexTransfer(forexTransferReq)
+	if err != nil {
+		fmt.Printf("Error processing forex transfer: %v\n", err)
+	} else {
+		fmt.Printf("Transaction ID: %s, Status: %s\n", 
+		forexTransfer.TransactionID, 
+		forexTransfer.Status)
+	}
+	fmt.Println()
+
+	// Example 10: Authentication Methods
+	fmt.Println("Example 10: Authentication Methods")
+	otpReq := api.OTPRequest{
+		PhoneNumber: "254712345678",
+		Purpose:     "Transaction Authentication",
+		Reference:   absa.GenerateReference(),
+	}
+	
+	otp, err := client.RequestOTP(otpReq)
+	if err != nil {
+		fmt.Printf("Error requesting OTP: %v\n", err)
+	} else {
+		fmt.Printf("OTP Request ID: %s, Status: %s, Expiry: %s\n", 
+			otp.RequestID, 
+			otp.Status,
+			otp.ExpiryTime.Format(time.RFC3339))
+		
+		// In a real application, the OTP would be entered by the user
+		// Here we're simulating with a dummy value
+		otpVerifyReq := api.OTPVerifyRequest{
+			RequestID: otp.RequestID,
+			OTPCode:   "123456", // This would be user input in a real app
+		}
+		
+		otpVerify, err := client.VerifyOTP(otpVerifyReq)
+		if err != nil {
+			fmt.Printf("Error verifying OTP: %v\n", err)
+		} else {
+			fmt.Printf("OTP Verification Status: %s\n", 
+				otpVerify.Status)
+		}
+	}
 }
