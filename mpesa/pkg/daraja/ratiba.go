@@ -24,10 +24,10 @@ type RatibaRequest struct {
 }
 
 type RatibaResponseHeader struct {
-	ResponseRefID        string `json:"responseRefID"`
-	ResponseCode         string `json:"responseCode"`
-	ResponseDescription  string `json:"responseDescription"`
-	ResultDesc           string `json:"ResultDesc,omitempty"`
+	ResponseRefID       string `json:"responseRefID"`
+	ResponseCode        string `json:"responseCode"`
+	ResponseDescription string `json:"responseDescription"`
+	ResultDesc          string `json:"ResultDesc,omitempty"`
 }
 
 type RatibaResponseBody struct {
@@ -66,7 +66,7 @@ const (
 )
 
 const (
-	TransactionTypePayBill  = "Standing Order Customer Pay Bill"    // For Paybill
+	TransactionTypePayBill  = "Standing Order Customer Pay Bill"     // For Paybill
 	TransactionTypeMerchant = "Standing Order Customer Pay Marchant" // For Buy Goods
 )
 

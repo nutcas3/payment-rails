@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type BusinessPayBillRequest struct {
@@ -27,20 +27,20 @@ type BusinessPayBillResponse struct {
 
 func (c *Client) BusinessPayBill(req BusinessPayBillRequest) (*BusinessPayBillResponse, error) {
 	internalReq := daraja.BusinessPayBillRequest{
-		Initiator:             req.Initiator,
-		SecurityCredential:    req.SecurityCredential,
-		CommandID:             "BusinessPayBill", // This API only supports BusinessPayBill command
-		SenderIdentifierType:  "4",               // Only type 4 is allowed for this API
-		RecieverIdentifierType: "4",              // Only type 4 is allowed for this API
-		Amount:                req.Amount,
-		PartyA:                req.PartyA,
-		PartyB:                req.PartyB,
-		AccountReference:      req.AccountReference,
-		Requester:             req.Requester,
-		Remarks:               req.Remarks,
-		QueueTimeOutURL:       req.QueueTimeOutURL,
-		ResultURL:             req.ResultURL,
-		Occasion:              req.Occasion,
+		Initiator:              req.Initiator,
+		SecurityCredential:     req.SecurityCredential,
+		CommandID:              "BusinessPayBill", // This API only supports BusinessPayBill command
+		SenderIdentifierType:   "4",               // Only type 4 is allowed for this API
+		RecieverIdentifierType: "4",               // Only type 4 is allowed for this API
+		Amount:                 req.Amount,
+		PartyA:                 req.PartyA,
+		PartyB:                 req.PartyB,
+		AccountReference:       req.AccountReference,
+		Requester:              req.Requester,
+		Remarks:                req.Remarks,
+		QueueTimeOutURL:        req.QueueTimeOutURL,
+		ResultURL:              req.ResultURL,
+		Occasion:               req.Occasion,
 	}
 
 	resp, err := c.Service.BusinessPayBill(internalReq)

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/shopspring/decimal"
-	"payment-rails/absa"
-	"payment-rails/absa/pkg/api"
+	"github.com/nutcas3/payment-rails/absa"
+	"github.com/nutcas3/payment-rails/absa/pkg/api"
 )
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 	balanceReq := api.AccountBalanceRequest{
 		AccountNumber: "1234567890",
 	}
-	
+
 	balance, err := client.GetAccountBalance(balanceReq)
 	if err != nil {
 		fmt.Printf("Error getting account balance: %v\n", err)
@@ -48,7 +48,7 @@ func main() {
 		AccountNumber: "1234567890",
 		BankCode:      "123",
 	}
-	
+
 	validation, err := client.ValidateAccount(validateReq)
 	if err != nil {
 		fmt.Printf("Error validating account: %v\n", err)
@@ -71,7 +71,7 @@ func main() {
 		Description:         "Payment for services",
 		BeneficiaryName:     "John Doe",
 	}
-	
+
 	sendMoney, err := client.SendMoney(sendMoneyReq)
 	if err != nil {
 		fmt.Printf("Error sending money: %v\n", err)
@@ -108,7 +108,7 @@ func main() {
 		Provider:      "MPESA",
 		CountryCode:   "KE",
 	}
-	
+
 	mobileTransfer, err := client.SendToMobileWallet(mobileReq)
 	if err != nil {
 		fmt.Printf("Error sending to mobile wallet: %v\n", err)
@@ -124,15 +124,15 @@ func main() {
 		FromDate:  time.Now().AddDate(0, 0, -7), // Query transactions from the last 7 days
 		ToDate:    time.Now(),
 	}
-	
+
 	query, err := client.QueryTransaction(queryReq)
 	if err != nil {
 		fmt.Printf("Error querying transaction: %v\n", err)
 	} else {
-		fmt.Printf("Transaction Status: %s, Amount: %s %s, Date: %s\n", 
-		query.Status, 
-		api.FormatAmount(query.Amount), 
-		query.Currency, 
+		fmt.Printf("Transaction Status: %s, Amount: %s %s, Date: %s\n",
+		query.Status,
+		api.FormatAmount(query.Amount),
+		query.Currency,
 		query.Timestamp.Format(time.RFC3339))
 	}
 	fmt.Println()
@@ -158,21 +158,21 @@ func main() {
 			BeneficiaryName:     "Employee Two",
 		},
 	}
-	
+
 	bulkReq := api.BulkPaymentRequest{
 		SourceAccount:  "1234567890",
 		Currency:       "KES",
 		BatchReference: bulkRef,
 		Items:          bulkItems,
 	}
-	
+
 	bulkPayment, err := client.ProcessBulkPayment(bulkReq)
 	if err != nil {
 		fmt.Printf("Error processing bulk payment: %v\n", err)
 	} else {
-		fmt.Printf("Batch ID: %s, Status: %s, Success Count: %d\n", 
-			bulkPayment.BatchID, 
-			bulkPayment.Status, 
+		fmt.Printf("Batch ID: %s, Status: %s, Success Count: %d\n",
+			bulkPayment.BatchID,
+			bulkPayment.Status,
 			bulkPayment.SuccessCount)
 	}
 	fmt.Println()
@@ -183,7 +183,7 @@ func main() {
 	standingOrderAmount, _ := decimal.NewFromString("1500.00")
 	startDate := time.Now().AddDate(0, 0, 1) // Start tomorrow
 	endDate := time.Now().AddDate(0, 6, 0)   // End after 6 months
-	
+
 	standingOrderReq := api.StandingOrderRequest{
 		SourceAccount:       "1234567890",
 		DestinationAccount:  "9876543210",
@@ -197,13 +197,13 @@ func main() {
 		EndDate:             endDate,
 		BeneficiaryName:     "Landlord Company Ltd",
 	}
-	
+
 	standingOrder, err := client.CreateStandingOrder(standingOrderReq)
 	if err != nil {
 		fmt.Printf("Error creating standing order: %v\n", err)
 	} else {
-		fmt.Printf("Standing Order ID: %s, Status: %s\n", 
-		standingOrder.OrderID, 
+		fmt.Printf("Standing Order ID: %s, Status: %s\n",
+		standingOrder.OrderID,
 		standingOrder.Status)
 	}
 	fmt.Println()
@@ -218,12 +218,12 @@ func main() {
 		BranchCode:     "001",
 		PhoneNumber:    "254712345678",
 	}
-	
+
 	beneficiary, err := client.CreateBeneficiary(beneficiaryReq)
 	if err != nil {
 		fmt.Printf("Error creating beneficiary: %v\n", err)
 	} else {
-		fmt.Printf("Status: %s\n", 
+		fmt.Printf("Status: %s\n",
 		beneficiary.Status)
 	}
 	fmt.Println()
@@ -234,17 +234,17 @@ func main() {
 		SourceCurrency:      "KES",
 		DestinationCurrency: "USD",
 	}
-	
+
 	forexRate, err := client.GetForexRate(forexRateReq)
 	if err != nil {
 		fmt.Printf("Error getting forex rate: %v\n", err)
 	} else {
-		fmt.Printf("Exchange Rate: 1 %s = %s %s\n", 
-		forexRate.SourceCurrency, 
-		api.FormatAmount(forexRate.Rate), 
+		fmt.Printf("Exchange Rate: 1 %s = %s %s\n",
+		forexRate.SourceCurrency,
+		api.FormatAmount(forexRate.Rate),
 		forexRate.DestinationCurrency)
 	}
-	
+
 	// Process a forex transfer
 	forexAmount, _ := decimal.NewFromString("5000.00")
 	forexTransferReq := api.ForexTransferRequest{
@@ -258,13 +258,13 @@ func main() {
 		Description:         "International payment",
 		BeneficiaryName:     "Global Supplier Inc.",
 	}
-	
+
 	forexTransfer, err := client.ProcessForexTransfer(forexTransferReq)
 	if err != nil {
 		fmt.Printf("Error processing forex transfer: %v\n", err)
 	} else {
-		fmt.Printf("Transaction ID: %s, Status: %s\n", 
-		forexTransfer.TransactionID, 
+		fmt.Printf("Transaction ID: %s, Status: %s\n",
+		forexTransfer.TransactionID,
 		forexTransfer.Status)
 	}
 	fmt.Println()
@@ -276,28 +276,28 @@ func main() {
 		Purpose:     "Transaction Authentication",
 		Reference:   absa.GenerateReference(),
 	}
-	
+
 	otp, err := client.RequestOTP(otpReq)
 	if err != nil {
 		fmt.Printf("Error requesting OTP: %v\n", err)
 	} else {
-		fmt.Printf("OTP Request ID: %s, Status: %s, Expiry: %s\n", 
-			otp.RequestID, 
+		fmt.Printf("OTP Request ID: %s, Status: %s, Expiry: %s\n",
+			otp.RequestID,
 			otp.Status,
 			otp.ExpiryTime.Format(time.RFC3339))
-		
+
 		// In a real application, the OTP would be entered by the user
 		// Here we're simulating with a dummy value
 		otpVerifyReq := api.OTPVerifyRequest{
 			RequestID: otp.RequestID,
 			OTPCode:   "123456", // This would be user input in a real app
 		}
-		
+
 		otpVerify, err := client.VerifyOTP(otpVerifyReq)
 		if err != nil {
 			fmt.Printf("Error verifying OTP: %v\n", err)
 		} else {
-			fmt.Printf("OTP Verification Status: %s\n", 
+			fmt.Printf("OTP Verification Status: %s\n",
 				otpVerify.Status)
 		}
 	}

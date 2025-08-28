@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type UssdPushRequest struct {

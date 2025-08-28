@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type B2CTopUpRequest struct {
@@ -26,19 +26,19 @@ type B2CTopUpResponse struct {
 
 func (c *Client) B2CAccountTopUp(req B2CTopUpRequest) (*B2CTopUpResponse, error) {
 	internalReq := daraja.B2CTopUpRequest{
-		Initiator:             req.Initiator,
-		SecurityCredential:    req.SecurityCredential,
-		CommandID:             "BusinessPayToBulk", // This API only supports BusinessPayToBulk command
-		SenderIdentifierType:  "4",                 // Only type 4 is allowed for this API
-		RecieverIdentifierType: "4",                // Only type 4 is allowed for this API
-		Amount:                req.Amount,
-		PartyA:                req.PartyA,
-		PartyB:                req.PartyB,
-		AccountReference:      req.AccountReference,
-		Requester:             req.Requester,
-		Remarks:               req.Remarks,
-		QueueTimeOutURL:       req.QueueTimeOutURL,
-		ResultURL:             req.ResultURL,
+		Initiator:              req.Initiator,
+		SecurityCredential:     req.SecurityCredential,
+		CommandID:              "BusinessPayToBulk", // This API only supports BusinessPayToBulk command
+		SenderIdentifierType:   "4",                 // Only type 4 is allowed for this API
+		RecieverIdentifierType: "4",                 // Only type 4 is allowed for this API
+		Amount:                 req.Amount,
+		PartyA:                 req.PartyA,
+		PartyB:                 req.PartyB,
+		AccountReference:       req.AccountReference,
+		Requester:              req.Requester,
+		Remarks:                req.Remarks,
+		QueueTimeOutURL:        req.QueueTimeOutURL,
+		ResultURL:              req.ResultURL,
 	}
 
 	resp, err := c.Service.B2CAccountTopUp(internalReq)

@@ -50,7 +50,6 @@ func (s *Service) InitiateStkPush(body STKPushBody) (*STKPushResponse, error) {
 	timestamp := time.Now().Format("20060102150405")
 	password := base64.StdEncoding.EncodeToString([]byte(body.BusinessShortCode + s.passKey + timestamp))
 
-
 	payload := STKPushBody{
 		BusinessShortCode: body.BusinessShortCode,
 		Password:          password,

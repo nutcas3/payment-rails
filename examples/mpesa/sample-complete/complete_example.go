@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"payment-rails/mpesa"
+	"github.com/nutcas3/payment-rails/mpesa"
 	"time"
 )
 
@@ -84,7 +84,7 @@ func main() {
 	phoneNumber := 0
 	fmt.Sscanf(config.ShortCode, "%d", &shortCode)
 	fmt.Sscanf(config.PhoneNumber, "%d", &phoneNumber)
-	
+
 	c2bSimulateResponse, err := client.C2BSimulate(
 		shortCode,
 		"CustomerPayBillOnline",
@@ -114,11 +114,11 @@ func main() {
 		log.Printf("Failed to initiate STK push: %v", err)
 	} else {
 		fmt.Printf("✓ STK Push Response: %+v\n", stkResponse)
-		
+
 		if stkResponse.CheckoutRequestID != "" {
 			fmt.Println("\n5. Querying STK Push status...")
 			time.Sleep(5 * time.Second)
-			
+
 			queryResponse, err := client.QueryStkPush(
 				config.ShortCode,
 				stkResponse.CheckoutRequestID,

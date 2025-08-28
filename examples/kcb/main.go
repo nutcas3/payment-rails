@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"payment-rails/kcb"
+	"github.com/nutcas3/payment-rails/kcb"
 	"time"
 )
 
@@ -18,29 +18,29 @@ func main() {
 	}
 
 	fmt.Println("=== KCB Buni API Examples ===")
-	
+
 	// Account Information Examples
 	accountExamples(client)
-	
+
 	// Forex Examples
 	forexExamples(client)
-	
+
 	// Payment Examples
 	paymentExamples(client)
-	
+
 	// PesaLink Examples
 	pesalinkExamples(client)
-	
+
 	// Mobile Money Examples
 	mobileMoneyExamples(client)
-	
+
 	// Utility Payment Examples
 	utilityExamples(client)
 }
 
 func accountExamples(client *kcb.Client) {
 	fmt.Println("\n=== Account Information Examples ===")
-	
+
 	// Example 1: Get Account Information
 	fmt.Println("\n1. Get Account Information:")
 	accountInfo, err := client.GetAccountInfo()
@@ -54,7 +54,7 @@ func accountExamples(client *kcb.Client) {
 		fmt.Printf("  Branch: %s\n", accountInfo.Data.Branch)
 		fmt.Printf("  Status: %s\n", accountInfo.Data.Status)
 	}
-	
+
 	// Example 2: Get Account Balance
 	fmt.Println("\n2. Get Account Balance:")
 	balance, err := client.GetAccountBalance("1234567890")
@@ -66,14 +66,14 @@ func accountExamples(client *kcb.Client) {
 		fmt.Printf("  Balance: %.2f %s\n", balance.Data.Balance, balance.Data.Currency)
 		fmt.Printf("  As Of: %s\n", balance.Data.AsOf)
 	}
-	
+
 	// Example 3: Get Account Statement
 	fmt.Println("\n3. Get Account Statement:")
 	// Get statement for the last month
 	now := time.Now()
 	endDate := now.Format("2006-01-02")
 	startDate := now.AddDate(0, -1, 0).Format("2006-01-02")
-	
+
 	statement, err := client.GetAccountStatement("1234567890", startDate, endDate)
 	if err != nil {
 		log.Printf("Failed to get account statement: %v", err)
@@ -83,23 +83,23 @@ func accountExamples(client *kcb.Client) {
 		fmt.Printf("  Period: %s to %s\n", statement.Data.StartDate, statement.Data.EndDate)
 		fmt.Printf("  Currency: %s\n", statement.Data.Currency)
 		fmt.Printf("  Transactions: %d\n", len(statement.Data.Transactions))
-		
+
 		// Print first 5 transactions or all if less than 5
 		txCount := len(statement.Data.Transactions)
 		if txCount > 5 {
 			txCount = 5
 		}
-		
+
 		for i := 0; i < txCount; i++ {
 			tx := statement.Data.Transactions[i]
-			fmt.Printf("    %s: %s %.2f - %s\n", 
+			fmt.Printf("    %s: %s %.2f - %s\n",
 				tx.TransactionDate.Format("2006-01-02"),
 				tx.Type,
 				tx.Amount,
 				tx.Description)
 		}
 	}
-	
+
 	// Example 4: Transfer Funds
 	fmt.Println("\n4. Transfer Funds:")
 	transfer, err := client.TransferFunds(
@@ -125,7 +125,7 @@ func accountExamples(client *kcb.Client) {
 
 func forexExamples(client *kcb.Client) {
 	fmt.Println("\n=== Forex Examples ===")
-	
+
 	// Example 1: Get Forex Rates
 	fmt.Println("\n1. Get Forex Rates:")
 	forexRates, err := client.GetForexRates("USD")
@@ -139,7 +139,7 @@ func forexExamples(client *kcb.Client) {
 			fmt.Printf("    %s: %.4f\n", currency, rate)
 		}
 	}
-	
+
 	// Example 2: Exchange Currency
 	fmt.Println("\n2. Exchange Currency:")
 	exchange, err := client.ExchangeCurrency("EUR", "USD", 100.0)
@@ -155,7 +155,7 @@ func forexExamples(client *kcb.Client) {
 
 func paymentExamples(client *kcb.Client) {
 	fmt.Println("\n=== Payment Examples ===")
-	
+
 	// Example 1: Make Vooma Payment
 	fmt.Println("\n1. Make Vooma Payment:")
 	payment, err := client.VoomaPay(100.0)
@@ -168,7 +168,7 @@ func paymentExamples(client *kcb.Client) {
 		fmt.Printf("  Transaction Date: %s\n", payment.Data.TransactionDate)
 		fmt.Printf("  Reference: %s\n", payment.Data.Reference)
 	}
-	
+
 	// Example 2: Check Vooma Payment Status
 	fmt.Println("\n2. Check Vooma Payment Status:")
 	// Using a sample transaction ID - in real usage, use the ID from the payment response
@@ -189,7 +189,7 @@ func paymentExamples(client *kcb.Client) {
 
 func pesalinkExamples(client *kcb.Client) {
 	fmt.Println("\n=== PesaLink Examples ===")
-	
+
 	// Example 1: PesaLink Transfer
 	fmt.Println("\n1. PesaLink Transfer:")
 	transfer, err := client.PesalinkTransfer(
@@ -213,7 +213,7 @@ func pesalinkExamples(client *kcb.Client) {
 		fmt.Printf("  Transaction Date: %s\n", transfer.Data.TransactionDate)
 		fmt.Printf("  Reference: %s\n", transfer.Data.Reference)
 	}
-	
+
 	// Example 2: Check PesaLink Transfer Status
 	fmt.Println("\n2. Check PesaLink Transfer Status:")
 	// Using a sample transaction ID - in real usage, use the ID from the transfer response
@@ -236,7 +236,7 @@ func pesalinkExamples(client *kcb.Client) {
 
 func mobileMoneyExamples(client *kcb.Client) {
 	fmt.Println("\n=== Mobile Money Examples ===")
-	
+
 	// Example 1: Mobile Money Transfer
 	fmt.Println("\n1. Mobile Money Transfer:")
 	transfer, err := client.MobileMoneyTransfer(
@@ -259,7 +259,7 @@ func mobileMoneyExamples(client *kcb.Client) {
 		fmt.Printf("  Transaction Date: %s\n", transfer.Data.TransactionDate)
 		fmt.Printf("  Reference: %s\n", transfer.Data.Reference)
 	}
-	
+
 	// Example 2: Check Mobile Money Transfer Status
 	fmt.Println("\n2. Check Mobile Money Transfer Status:")
 	// Using a sample transaction ID - in real usage, use the ID from the transfer response
@@ -282,7 +282,7 @@ func mobileMoneyExamples(client *kcb.Client) {
 
 func utilityExamples(client *kcb.Client) {
 	fmt.Println("\n=== Utility Payment Examples ===")
-	
+
 	// Example 1: Get Utility Providers
 	fmt.Println("\n1. Get Utility Providers:")
 	providers, err := client.GetUtilityProviders()
@@ -295,16 +295,16 @@ func utilityExamples(client *kcb.Client) {
 		if provCount > 5 {
 			provCount = 5
 		}
-		
+
 		for i := 0; i < provCount; i++ {
 			prov := providers.Data.Providers[i]
-			fmt.Printf("    %s - %s (%s)\n", 
+			fmt.Printf("    %s - %s (%s)\n",
 				prov.ProviderID,
 				prov.ProviderName,
 				prov.Category)
 		}
 	}
-	
+
 	// Example 2: Pay Utility Bill
 	fmt.Println("\n2. Pay Utility Bill:")
 	payment, err := client.PayUtility(
@@ -331,7 +331,7 @@ func utilityExamples(client *kcb.Client) {
 			fmt.Printf("  Receipt Number: %s\n", payment.Data.ReceiptNumber)
 		}
 	}
-	
+
 	// Example 3: Check Utility Payment Status
 	fmt.Println("\n3. Check Utility Payment Status:")
 	// Using a sample transaction ID - in real usage, use the ID from the payment response

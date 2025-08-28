@@ -14,37 +14,38 @@ import (
 type Environment string
 
 const (
-	SANDBOX Environment = "sandbox"
+	SANDBOX    Environment = "sandbox"
 	PRODUCTION Environment = "production"
 
-	authURL                 = "/oauth/v1/generate?grant_type=client_credentials"
-	stkPushURL              = "/mpesa/stkpush/v1/processrequest"
-	stkPushQueryURL         = "/mpesa/stkpushquery/v1/query"
-	c2bRegisterURL          = "/mpesa/c2b/v1/registerurl"
-	c2bSimulateURL          = "/mpesa/c2b/v1/simulate"
-	b2cURL                  = "/mpesa/b2c/v1/paymentrequest"
-	b2bURL                  = "/mpesa/b2b/v1/paymentrequest"
-	accountBalanceURL       = "/mpesa/accountbalance/v1/query"
-	transactionStatusURL    = "/mpesa/transactionstatus/v1/query"
-	reversalURL             = "/mpesa/reversal/v1/request"
-	
+	authURL              = "/oauth/v1/generate?grant_type=client_credentials"
+	stkPushURL           = "/mpesa/stkpush/v1/processrequest"
+	stkPushQueryURL      = "/mpesa/stkpushquery/v1/query"
+	c2bRegisterURL       = "/mpesa/c2b/v1/registerurl"
+	c2bSimulateURL       = "/mpesa/c2b/v1/simulate"
+	b2cURL               = "/mpesa/b2c/v1/paymentrequest"
+	b2bURL               = "/mpesa/b2b/v1/paymentrequest"
+	accountBalanceURL    = "/mpesa/accountbalance/v1/query"
+	transactionStatusURL = "/mpesa/transactionstatus/v1/query"
+	reversalURL          = "/mpesa/reversal/v1/request"
+
 	authTokenCacheKey = "auth_token"
 )
 
 type Service struct {
-	apiKey          string
-	consumerSecret  string
-	passKey         string
-	environment     Environment
-	baseURL         string
-	httpClient      *http.Client
-	cache           *cache.Cache
+	apiKey         string
+	consumerSecret string
+	passKey        string
+	environment    Environment
+	baseURL        string
+	httpClient     *http.Client
+	cache          *cache.Cache
 }
 
 type AuthResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   string `json:"expires_in"`
 }
+
 func New(apiKey, consumerSecret, passKey string, environment Environment) (*Service, error) {
 	if apiKey == "" || consumerSecret == "" || passKey == "" {
 		return nil, fmt.Errorf("apiKey, consumerSecret, and passKey are required")

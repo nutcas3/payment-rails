@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"payment-rails/mpesa"
+	"github.com/nutcas3/payment-rails/mpesa"
 	"time"
 )
 
@@ -48,7 +48,7 @@ func main() {
 	fmt.Printf("Checkout Request ID: %s\n", response.CheckoutRequestID)
 	fmt.Printf("Result Code: %s\n", response.ResultCode)
 	fmt.Printf("Result Description: %s\n", response.ResultDesc)
-	
+
 	// Interpret the response using tagged switch
 	switch response.ResultCode {
 	case "0":

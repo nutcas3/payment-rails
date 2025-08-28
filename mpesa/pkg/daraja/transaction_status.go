@@ -7,16 +7,16 @@ import (
 )
 
 type TransactionStatusRequestBody struct {
-	Initiator            string `json:"Initiator"`
-	SecurityCredential   string `json:"SecurityCredential"`
-	CommandID            string `json:"CommandID"`
-	TransactionID        string `json:"TransactionID"`
-	PartyA               int    `json:"PartyA"`
-	IdentifierType       int    `json:"IdentifierType"`
-	ResultURL            string `json:"ResultURL"`
-	QueueTimeOutURL      string `json:"QueueTimeOutURL"`
-	Remarks              string `json:"Remarks"`
-	Occassion            string `json:"Occassion"`
+	Initiator          string `json:"Initiator"`
+	SecurityCredential string `json:"SecurityCredential"`
+	CommandID          string `json:"CommandID"`
+	TransactionID      string `json:"TransactionID"`
+	PartyA             int    `json:"PartyA"`
+	IdentifierType     int    `json:"IdentifierType"`
+	ResultURL          string `json:"ResultURL"`
+	QueueTimeOutURL    string `json:"QueueTimeOutURL"`
+	Remarks            string `json:"Remarks"`
+	Occassion          string `json:"Occassion"`
 }
 
 type TransactionStatusResponse struct {

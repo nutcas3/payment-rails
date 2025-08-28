@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 // InitiateStkPush initiates an STK push request using a parameter struct
@@ -17,7 +17,7 @@ func (c *Client) InitiateStkPush(params StkPushParams) (*daraja.STKPushResponse,
 		AccountReference:  params.AccountReference,
 		TransactionDesc:   params.TransactionDesc,
 	}
-	
+
 	return c.Service.InitiateStkPush(body)
 }
 
@@ -47,7 +47,7 @@ func (c *Client) C2BRegisterURL(shortCode, responseType, confirmationURL, valida
 		ConfirmationURL: confirmationURL,
 		ValidationURL:   validationURL,
 	}
-	
+
 	return c.Service.C2BRegisterURL(body)
 }
 
@@ -59,7 +59,7 @@ func (c *Client) C2BSimulate(shortCode int, commandID string, amount int, msisdn
 		Msisdn:        msisdn,
 		BillRefNumber: billRefNumber,
 	}
-	
+
 	return c.Service.C2BSimulate(body)
 }
 
@@ -77,7 +77,7 @@ func (c *Client) B2CPayment(params B2CPaymentParams) (*daraja.B2CResponse, error
 		ResultURL:          params.ResultURL,
 		Occassion:          params.Occasion,
 	}
-	
+
 	return c.Service.B2CPayment(body)
 }
 
@@ -114,7 +114,7 @@ func (c *Client) B2BPayment(params B2BPaymentParams) (*daraja.BusinessToBusiness
 		QueueTimeOutURL:       params.QueueTimeOutURL,
 		ResultURL:             params.ResultURL,
 	}
-	
+
 	return c.Service.BusinessToBusinessPayment(body)
 }
 
@@ -151,7 +151,7 @@ func (c *Client) TransactionStatus(params TransactionStatusParams) (*daraja.Tran
 		Remarks:            params.Remarks,
 		Occassion:          params.Occasion,
 	}
-	
+
 	return c.Service.TransactionStatus(body)
 }
 
@@ -183,7 +183,7 @@ func (c *Client) AccountBalance(params AccountBalanceParams) (*daraja.AccountBal
 		QueueTimeOutURL:    params.QueueTimeOutURL,
 		ResultURL:          params.ResultURL,
 	}
-	
+
 	return c.Service.AccountBalance(body)
 }
 
@@ -216,7 +216,7 @@ func (c *Client) Reversal(params ReversalParams) (*daraja.ReversalResponse, erro
 		Remarks:                params.Remarks,
 		Occasion:               params.Occasion,
 	}
-	
+
 	return c.Service.Reversal(body)
 }
 

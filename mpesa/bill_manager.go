@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type BillManagerOptInRequest struct {
@@ -144,7 +144,7 @@ func (c *Client) CreateSingleInvoice(req BillManagerSingleInvoiceRequest) (*Bill
 
 func (c *Client) CreateBulkInvoices(requests []BillManagerSingleInvoiceRequest) (*BillManagerInvoiceResponse, error) {
 	darajaReqs := make([]daraja.BillManagerSingleInvoiceRequest, len(requests))
-	
+
 	for i, req := range requests {
 		invoiceItems := make([]daraja.BillManagerInvoiceItem, len(req.InvoiceItems))
 		for j, item := range req.InvoiceItems {
@@ -222,7 +222,7 @@ func (c *Client) CancelSingleInvoice(req BillManagerCancelInvoiceRequest) (*Bill
 
 func (c *Client) CancelBulkInvoices(requests []BillManagerCancelInvoiceRequest) (*BillManagerCancelInvoiceResponse, error) {
 	darajaReqs := make([]daraja.BillManagerCancelInvoiceRequest, len(requests))
-	
+
 	for i, req := range requests {
 		darajaReqs[i] = daraja.BillManagerCancelInvoiceRequest{
 			ExternalReference: req.ExternalReference,

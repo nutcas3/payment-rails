@@ -1,7 +1,7 @@
 package kcb
 
 import (
-	"payment-rails/kcb/pkg/api"
+	"github.com/nutcas3/payment-rails/kcb/pkg/api"
 )
 
 type Client struct {

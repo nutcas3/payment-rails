@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type RatibaRequest struct {
@@ -39,7 +39,7 @@ const (
 
 const (
 	TransactionTypePayBill  = "Standing Order Customer Pay Bill"     // For Paybill
-	TransactionTypeMerchant = "Standing Order Customer Pay Marchant" // For Buy Goods
+	TransactionTypeMerchant = "Standing Order Customer Pay Merchant" // For Buy Goods
 )
 
 const (

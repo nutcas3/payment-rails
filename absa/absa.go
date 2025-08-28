@@ -3,7 +3,7 @@ package absa
 import (
 	"fmt"
 	"net/http"
-	"payment-rails/absa/pkg/api"
+	"github.com/nutcas3/payment-rails/absa/pkg/api"
 )
 
 type Client struct {
