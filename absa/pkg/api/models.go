@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-// Status constants
 const (
 	StatusSuccess      = "SUCCESS"
 	StatusPending      = "PENDING"
@@ -15,7 +14,6 @@ const (
 	StatusExpired      = "EXPIRED"
 )
 
-// Transaction type constants
 const (
 	TransactionTypeDebit       = "DEBIT"
 	TransactionTypeCredit      = "CREDIT"
@@ -24,7 +22,6 @@ const (
 	TransactionTypeTransfer    = "TRANSFER"
 )
 
-// Account Balance
 type AccountBalanceRequest struct {
 	AccountNumber string `json:"accountNumber"`
 	AccountType   string `json:"accountType,omitempty"`
@@ -39,7 +36,6 @@ type AccountBalanceResponse struct {
 	Timestamp        time.Time       `json:"timestamp"`
 }
 
-// Mini Statement
 type MiniStatementRequest struct {
 	AccountNumber string    `json:"accountNumber"`
 	StartDate     time.Time `json:"startDate,omitempty"`
@@ -51,7 +47,7 @@ type StatementEntry struct {
 	Date        time.Time       `json:"date"`
 	Description string          `json:"description"`
 	Amount      decimal.Decimal `json:"amount"`
-	Type        string          `json:"type"` // DEBIT or CREDIT
+	Type        string          `json:"type"`
 	Balance     decimal.Decimal `json:"balance"`
 	Reference   string          `json:"reference"`
 }
@@ -64,24 +60,22 @@ type MiniStatementResponse struct {
 	Timestamp     time.Time        `json:"timestamp"`
 }
 
-// Full Statement
 type FullStatementRequest struct {
 	AccountNumber string    `json:"accountNumber"`
 	StartDate     time.Time `json:"startDate"`
 	EndDate       time.Time `json:"endDate"`
-	Format        string    `json:"format,omitempty"` // PDF or CSV
+	Format        string    `json:"format,omitempty"`
 }
 
 type FullStatementResponse struct {
 	AccountNumber string    `json:"accountNumber"`
 	DocumentURL   string    `json:"documentUrl,omitempty"`
-	DocumentData  string    `json:"documentData,omitempty"` // Base64 encoded if not URL
+	DocumentData  string    `json:"documentData,omitempty"`
 	Format        string    `json:"format"`
 	Status        string    `json:"status"`
 	Timestamp     time.Time `json:"timestamp"`
 }
 
-// Account Validation
 type AccountValidateRequest struct {
 	AccountNumber string `json:"accountNumber"`
 	BankCode      string `json:"bankCode,omitempty"`
@@ -101,7 +95,6 @@ type AccountValidateResponse struct {
 	Timestamp     time.Time `json:"timestamp"`
 }
 
-// Send Money (Bank Transfer)
 type SendMoneyRequest struct {
 	SourceAccount       string          `json:"sourceAccount"`
 	DestinationAccount  string          `json:"destinationAccount"`
@@ -121,7 +114,6 @@ type SendMoneyResponse struct {
 	Timestamp     time.Time `json:"timestamp"`
 }
 
-// Mobile Wallet
 type MobileWalletRequest struct {
 	SourceAccount string          `json:"sourceAccount"`
 	MobileNumber  string          `json:"mobileNumber"`
@@ -141,7 +133,6 @@ type MobileWalletResponse struct {
 	Timestamp     time.Time `json:"timestamp"`
 }
 
-// Bill Payment
 type BillPaymentRequest struct {
 	SourceAccount     string          `json:"sourceAccount"`
 	BillerCode        string          `json:"billerCode"`
@@ -162,7 +153,6 @@ type BillPaymentResponse struct {
 	ReceiptNumber string    `json:"receiptNumber,omitempty"`
 }
 
-// Receive Money
 type ReceiveMoneyRequest struct {
 	AccountNumber string          `json:"accountNumber"`
 	Amount        decimal.Decimal `json:"amount"`
@@ -185,7 +175,6 @@ type ReceiveMoneyResponse struct {
 	Timestamp   time.Time `json:"timestamp"`
 }
 
-// Transaction Query
 type TransactionQueryRequest struct {
 	TransactionID string    `json:"transactionId,omitempty"`
 	Reference     string    `json:"reference,omitempty"`
@@ -207,7 +196,6 @@ type TransactionQueryResponse struct {
 	Fee           decimal.Decimal `json:"fee,omitempty"`
 }
 
-// Airtime Purchase
 type AirtimePurchaseRequest struct {
 	SourceAccount string          `json:"sourceAccount"`
 	MobileNumber  string          `json:"mobileNumber"`
@@ -226,7 +214,6 @@ type AirtimePurchaseResponse struct {
 	Timestamp     time.Time `json:"timestamp"`
 }
 
-// Bulk Payments
 type BulkPaymentItem struct {
 	DestinationAccount  string          `json:"destinationAccount"`
 	DestinationBankCode string          `json:"destinationBankCode,omitempty"`
@@ -281,7 +268,6 @@ type BulkPaymentStatusResponse struct {
 	Items        []BulkPaymentItemResponse `json:"items"`
 }
 
-// Standing Orders/Recurring Payments
 const (
 	FrequencyDaily   = "DAILY"
 	FrequencyWeekly  = "WEEKLY"
@@ -300,8 +286,8 @@ type StandingOrderRequest struct {
 	StartDate           time.Time       `json:"startDate"`
 	EndDate             time.Time       `json:"endDate,omitempty"`
 	Frequency           string          `json:"frequency"` // DAILY, WEEKLY, MONTHLY, YEARLY
-	DayOfMonth          int             `json:"dayOfMonth,omitempty"` // For MONTHLY frequency
-	DayOfWeek           int             `json:"dayOfWeek,omitempty"`  // For WEEKLY frequency (1=Monday, 7=Sunday)
+	DayOfMonth          int             `json:"dayOfMonth,omitempty"`
+	DayOfWeek           int             `json:"dayOfWeek,omitempty"`
 	BeneficiaryName     string          `json:"beneficiaryName,omitempty"`
 	CallbackURL         string          `json:"callbackUrl,omitempty"`
 }
@@ -358,7 +344,6 @@ type StandingOrderListResponse struct {
 	Timestamp time.Time                     `json:"timestamp"`
 }
 
-// Beneficiary Management
 const (
 	BeneficiaryTypeBank   = "BANK"
 	BeneficiaryTypeMobile = "MOBILE"
@@ -368,7 +353,7 @@ const (
 type Beneficiary struct {
 	ID               string    `json:"id"`
 	Name             string    `json:"name"`
-	Type             string    `json:"type"` // BANK, MOBILE, BILLER
+	Type             string    `json:"type"`
 	AccountNumber    string    `json:"accountNumber,omitempty"`
 	BankCode         string    `json:"bankCode,omitempty"`
 	BranchCode       string    `json:"branchCode,omitempty"`
@@ -384,7 +369,7 @@ type Beneficiary struct {
 
 type BeneficiaryCreateRequest struct {
 	Name             string `json:"name"`
-	Type             string `json:"type"` // BANK, MOBILE, BILLER
+	Type             string `json:"type"`
 	AccountNumber    string `json:"accountNumber,omitempty"`
 	BankCode         string `json:"bankCode,omitempty"`
 	BranchCode       string `json:"branchCode,omitempty"`
@@ -445,7 +430,6 @@ type BeneficiaryDeleteResponse struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
-// Foreign Exchange
 type ForexRateRequest struct {
 	SourceCurrency      string          `json:"sourceCurrency"`
 	DestinationCurrency string          `json:"destinationCurrency"`
@@ -506,7 +490,6 @@ type ForexTransferStatusResponse struct {
 	Timestamp          time.Time       `json:"timestamp"`
 }
 
-// Additional Authentication Methods
 const (
 	AuthMethodOTP      = "OTP"
 	AuthMethodBiometric = "BIOMETRIC"
@@ -516,7 +499,7 @@ const (
 type OTPRequest struct {
 	PhoneNumber string `json:"phoneNumber"`
 	Email       string `json:"email,omitempty"`
-	Purpose     string `json:"purpose"` // e.g., TRANSACTION, LOGIN, REGISTRATION
+	Purpose     string `json:"purpose"`
 	Reference   string `json:"reference,omitempty"`
 }
 
@@ -540,8 +523,8 @@ type OTPVerifyResponse struct {
 
 type TransactionAuthRequest struct {
 	TransactionID string `json:"transactionId"`
-	AuthMethod    string `json:"authMethod"` // OTP, BIOMETRIC, 2FA
-	AuthData      string `json:"authData,omitempty"` // OTP code or other auth data
+	AuthMethod    string `json:"authMethod"`
+	AuthData      string `json:"authData,omitempty"`
 }
 
 type TransactionAuthResponse struct {
@@ -553,7 +536,7 @@ type TransactionAuthResponse struct {
 type DeviceRegistrationRequest struct {
 	DeviceID       string `json:"deviceId"`
 	DeviceName     string `json:"deviceName"`
-	DeviceType     string `json:"deviceType"` // MOBILE, TABLET, DESKTOP
+	DeviceType     string `json:"deviceType"`
 	OperatingSystem string `json:"operatingSystem"`
 	AppVersion     string `json:"appVersion"`
 }

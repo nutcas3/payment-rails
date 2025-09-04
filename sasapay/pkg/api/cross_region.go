@@ -8,7 +8,6 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// Supported regions for cross-region transfers
 const (
 	RegionKenya     = "KE"
 	RegionUganda    = "UG"
@@ -20,7 +19,6 @@ const (
 	RegionGhana     = "GH"
 )
 
-// CrossRegionTransferRequest represents a request to transfer money across regions
 type CrossRegionTransferRequest struct {
 	SourceRegion      string          `json:"source_region"`
 	DestinationRegion string          `json:"destination_region"`
@@ -33,7 +31,6 @@ type CrossRegionTransferRequest struct {
 	CallbackURL       string          `json:"callback_url,omitempty"`
 }
 
-// CrossRegionTransferResponse represents the response from a cross-region transfer
 type CrossRegionTransferResponse struct {
 	TransactionID      string          `json:"transaction_id"`
 	Status             string          `json:"status"`
@@ -46,7 +43,6 @@ type CrossRegionTransferResponse struct {
 	Timestamp          time.Time       `json:"timestamp"`
 }
 
-// CrossRegionQuoteRequest represents a request to get a quote for a cross-region transfer
 type CrossRegionQuoteRequest struct {
 	SourceRegion      string          `json:"source_region"`
 	DestinationRegion string          `json:"destination_region"`
@@ -55,7 +51,6 @@ type CrossRegionQuoteRequest struct {
 	Amount            decimal.Decimal `json:"amount"`
 }
 
-// CrossRegionQuoteResponse represents the response from a cross-region quote request
 type CrossRegionQuoteResponse struct {
 	QuoteID            string          `json:"quote_id"`
 	SourceAmount       decimal.Decimal `json:"source_amount"`
@@ -69,9 +64,7 @@ type CrossRegionQuoteResponse struct {
 	Timestamp          time.Time       `json:"timestamp"`
 }
 
-// CrossRegionTransfer initiates a cross-region money transfer
 func (c *Client) CrossRegionTransfer(req CrossRegionTransferRequest) (*CrossRegionTransferResponse, error) {
-	// Validate request
 	if req.SourceRegion == "" {
 		return nil, fmt.Errorf("source region is required")
 	}
@@ -97,19 +90,16 @@ func (c *Client) CrossRegionTransfer(req CrossRegionTransferRequest) (*CrossRegi
 		return nil, fmt.Errorf("reference is required")
 	}
 
-	// Send request
 	respBody, err := c.SendRequest("POST", "/cross-region/transfer", req)
 	if err != nil {
 		return nil, err
 	}
 
-	// Parse response
 	var resp CrossRegionTransferResponse
 	if err := json.Unmarshal(respBody, &resp); err != nil {
 		return nil, fmt.Errorf("error unmarshalling response: %w", err)
 	}
 
-	// Set timestamp if not provided
 	if resp.Timestamp.IsZero() {
 		resp.Timestamp = time.Now().UTC()
 	}
@@ -117,9 +107,7 @@ func (c *Client) CrossRegionTransfer(req CrossRegionTransferRequest) (*CrossRegi
 	return &resp, nil
 }
 
-// GetCrossRegionQuote gets a quote for a cross-region transfer
 func (c *Client) GetCrossRegionQuote(req CrossRegionQuoteRequest) (*CrossRegionQuoteResponse, error) {
-	// Validate request
 	if req.SourceRegion == "" {
 		return nil, fmt.Errorf("source region is required")
 	}
@@ -139,19 +127,16 @@ func (c *Client) GetCrossRegionQuote(req CrossRegionQuoteRequest) (*CrossRegionQ
 		return nil, fmt.Errorf("amount must be greater than zero")
 	}
 
-	// Send request
 	respBody, err := c.SendRequest("POST", "/cross-region/quote", req)
 	if err != nil {
 		return nil, err
 	}
 
-	// Parse response
 	var resp CrossRegionQuoteResponse
 	if err := json.Unmarshal(respBody, &resp); err != nil {
 		return nil, fmt.Errorf("error unmarshalling response: %w", err)
 	}
 
-	// Set timestamp if not provided
 	if resp.Timestamp.IsZero() {
 		resp.Timestamp = time.Now().UTC()
 	}

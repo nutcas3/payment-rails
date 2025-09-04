@@ -49,19 +49,15 @@ func NewCache() *cache.Cache {
 	return cache.New(24*time.Hour, 1*time.Hour)
 }
 
-// SetWebhookSecret sets the secret used to validate webhook signatures
 func (c *Client) SetWebhookSecret(secret string) {
 	c.WebhookSecret = secret
 }
 
-// GetAuthToken retrieves an authentication token from the cache or from the API
 func (c *Client) GetAuthToken() (string, error) {
-	// Check if we have a cached token
 	if token, found := c.TokenCache.Get(tokenCacheKey); found {
 		return token.(string), nil
 	}
 	
-	// No cached token, request a new one
 	url := fmt.Sprintf("%s/auth/token", c.BaseURL)
 	
 	authReq := AuthTokenRequest{
@@ -102,17 +98,13 @@ func (c *Client) GetAuthToken() (string, error) {
 		return "", fmt.Errorf("error unmarshalling auth response: %w", err)
 	}
 	
-	// Cache the token
-	// Set expiry to token expiry minus buffer to ensure we refresh before it expires
 	expiryDuration := time.Duration(authResp.ExpiresIn-tokenExpiryBuffer) * time.Second
 	c.TokenCache.Set(tokenCacheKey, authResp.AccessToken, expiryDuration)
 	
 	return authResp.AccessToken, nil
 }
 
-// SendRequest sends an HTTP request to the SasaPay API
 func (c *Client) SendRequest(method, endpoint string, body interface{}) ([]byte, error) {
-	// Get auth token
 	token, err := c.GetAuthToken()
 	if err != nil {
 		return nil, fmt.Errorf("error getting auth token: %w", err)
