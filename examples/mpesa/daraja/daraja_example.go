@@ -31,17 +31,17 @@ func main() {
 	fmt.Printf("Auth Token: %s\n", token)
 
 	// Example: Initiate STK Push
-	stkResponse, err := client.InitiateStkPush(
-		"174379",                                     // Business Short Code
-		"CustomerPayBillOnline",                      // Transaction Type
-		"1",                                          // Amount
-		"254708374149",                               // Party A (Phone number)
-		"174379",                                     // Party B (Short code)
-		"254708374149",                               // Phone Number
-		"https://example.com/callback",               // Callback URL
-		"Test Payment",                               // Account Reference
-		"Test Payment",                               // Transaction Description
-	)
+	stkResponse, err := client.InitiateStkPush(mpesa.StkPushParams{
+		BusinessShortCode: "174379",
+		TransactionType:   "CustomerPayBillOnline",
+		Amount:            "1",
+		PartyA:            "254708374149",
+		PartyB:            "174379",
+		PhoneNumber:       "254708374149",
+		CallBackURL:       "https://example.com/callback",
+		AccountReference:  "Test Payment",
+		TransactionDesc:   "Test Payment",
+	})
 	if err != nil {
 		log.Fatalf("Failed to initiate STK push: %v", err)
 	}
@@ -88,18 +88,18 @@ func main() {
 	// Example: B2C Payment
 	// Note: You need a valid security credential
 	/*
-	b2cResponse, err := client.B2CPayment(
-		"TestInitiator",                              // Initiator Name
-		"SecurityCredential",                         // Security Credential
-		"BusinessPayment",                            // Command ID
-		1,                                            // Amount
-		600000,                                       // Party A (Short code)
-		254708374149,                                 // Party B (Phone number)
-		"Test B2C Payment",                           // Remarks
-		"https://example.com/b2c/timeout",            // Queue Timeout URL
-		"https://example.com/b2c/result",             // Result URL
-		"Test",                                       // Occasion
-	)
+	b2cResponse, err := client.B2CPayment(mpesa.B2CPaymentParams{
+		InitiatorName:      "TestInitiator",
+		SecurityCredential: "SecurityCredential",
+		CommandID:          "BusinessPayment",
+		Amount:             1,
+		PartyA:             600000,
+		PartyB:             254708374149,
+		Remarks:            "Test B2C Payment",
+		QueueTimeOutURL:    "https://example.com/b2c/timeout",
+		ResultURL:          "https://example.com/b2c/result",
+		Occasion:           "Test",
+	})
 	if err != nil {
 		log.Fatalf("Failed to make B2C payment: %v", err)
 	}
@@ -109,18 +109,18 @@ func main() {
 	// Example: Transaction Status
 	// Note: You need a valid transaction ID and security credential
 	/*
-	statusResponse, err := client.TransactionStatus(
-		"TestInitiator",                              // Initiator
-		"SecurityCredential",                         // Security Credential
-		"TransactionStatusQuery",                     // Command ID
-		"LKXXXX1234",                                 // Transaction ID
-		600000,                                       // Party A (Short code)
-		4,                                            // Identifier Type
-		"https://example.com/status/result",          // Result URL
-		"https://example.com/status/timeout",         // Queue Timeout URL
-		"Test Transaction Status",                    // Remarks
-		"Test",                                       // Occasion
-	)
+	statusResponse, err := client.TransactionStatus(mpesa.TransactionStatusParams{
+		Initiator:          "TestInitiator",
+		SecurityCredential: "SecurityCredential",
+		CommandID:          "TransactionStatusQuery",
+		TransactionID:      "LKXXXX1234",
+		PartyA:             600000,
+		IdentifierType:     4,
+		ResultURL:          "https://example.com/status/result",
+		QueueTimeOutURL:    "https://example.com/status/timeout",
+		Remarks:            "Test Transaction Status",
+		Occasion:           "Test",
+	})
 	if err != nil {
 		log.Fatalf("Failed to query transaction status: %v", err)
 	}

@@ -99,17 +99,17 @@ func main() {
 	}
 
 	fmt.Println("\n4. Initiating STK Push...")
-	stkResponse, err := client.InitiateStkPush(
-		config.ShortCode,
-		"CustomerPayBillOnline",
-		"1",
-		config.PhoneNumber,
-		config.ShortCode,
-		config.PhoneNumber,
-		"https://example.com/callback",
-		"Test Payment",
-		"Test Payment",
-	)
+	stkResponse, err := client.InitiateStkPush(mpesa.StkPushParams{
+		BusinessShortCode: config.ShortCode,
+		TransactionType:   "CustomerPayBillOnline",
+		Amount:            "1",
+		PartyA:            config.PhoneNumber,
+		PartyB:            config.ShortCode,
+		PhoneNumber:       config.PhoneNumber,
+		CallBackURL:       "https://example.com/callback",
+		AccountReference:  "Test Payment",
+		TransactionDesc:   "Test Payment",
+	})
 	if err != nil {
 		log.Printf("Failed to initiate STK push: %v", err)
 	} else {
@@ -137,18 +137,18 @@ func main() {
 	/*
 	// Example: B2C Payment
 	fmt.Println("\n6. Making B2C Payment...")
-	b2cResponse, err := client.B2CPayment(
-		"TestInitiator",                              // Initiator Name
-		"SecurityCredential",                         // Security Credential
-		"BusinessPayment",                            // Command ID
-		1,                                            // Amount
-		shortCode,                                    // Party A (Short code)
-		phoneNumber,                                  // Party B (Phone number)
-		"Test B2C Payment",                           // Remarks
-		"https://example.com/b2c/timeout",            // Queue Timeout URL
-		"https://example.com/b2c/result",             // Result URL
-		"Test",                                       // Occasion
-	)
+	b2cResponse, err := client.B2CPayment(mpesa.B2CPaymentParams{
+		InitiatorName:      "TestInitiator",
+		SecurityCredential: "SecurityCredential",
+		CommandID:          "BusinessPayment",
+		Amount:             1,
+		PartyA:             shortCode,
+		PartyB:             phoneNumber,
+		Remarks:            "Test B2C Payment",
+		QueueTimeOutURL:    "https://example.com/b2c/timeout",
+		ResultURL:          "https://example.com/b2c/result",
+		Occasion:           "Test",
+	})
 	if err != nil {
 		log.Printf("Failed to make B2C payment: %v", err)
 	} else {
@@ -157,21 +157,21 @@ func main() {
 
 	// Example: B2B Payment
 	fmt.Println("\n7. Making B2B Payment...")
-	b2bResponse, err := client.B2BPayment(
-		"TestInitiator",                              // Initiator
-		"SecurityCredential",                         // Security Credential
-		"BusinessPayBill",                            // Command ID
-		"4",                                          // Sender Identifier Type
-		"4",                                          // Receiver Identifier Type
-		"100",                                        // Amount
-		config.ShortCode,                             // Party A (Short code)
-		"600001",                                     // Party B (Short code)
-		"Test",                                       // Account Reference
-		config.PhoneNumber,                           // Requester
-		"Test B2B Payment",                           // Remarks
-		"https://example.com/b2b/timeout",            // Queue Timeout URL
-		"https://example.com/b2b/result",             // Result URL
-	)
+	b2bResponse, err := client.B2BPayment(mpesa.B2BPaymentParams{
+		Initiator:              "TestInitiator",
+		SecurityCredential:     "SecurityCredential",
+		CommandID:              "BusinessPayBill",
+		SenderIdentifierType:   "4",
+		ReceiverIdentifierType: "4",
+		Amount:                 "100",
+		PartyA:                 config.ShortCode,
+		PartyB:                 "600001",
+		AccountReference:       "Test",
+		Requester:              config.PhoneNumber,
+		Remarks:                "Test B2B Payment",
+		QueueTimeOutURL:        "https://example.com/b2b/timeout",
+		ResultURL:              "https://example.com/b2b/result",
+	})
 	if err != nil {
 		log.Printf("Failed to make B2B payment: %v", err)
 	} else {
@@ -180,18 +180,18 @@ func main() {
 
 	// Example: Transaction Status
 	fmt.Println("\n8. Querying Transaction Status...")
-	statusResponse, err := client.TransactionStatus(
-		"TestInitiator",                              // Initiator
-		"SecurityCredential",                         // Security Credential
-		"TransactionStatusQuery",                     // Command ID
-		"LKXXXX1234",                                 // Transaction ID
-		shortCode,                                    // Party A (Short code)
-		4,                                            // Identifier Type
-		"https://example.com/status/result",          // Result URL
-		"https://example.com/status/timeout",         // Queue Timeout URL
-		"Test Transaction Status",                    // Remarks
-		"Test",                                       // Occasion
-	)
+	statusResponse, err := client.TransactionStatus(mpesa.TransactionStatusParams{
+		Initiator:          "TestInitiator",
+		SecurityCredential: "SecurityCredential",
+		CommandID:          "TransactionStatusQuery",
+		TransactionID:      "LKXXXX1234",
+		PartyA:             shortCode,
+		IdentifierType:     4,
+		ResultURL:          "https://example.com/status/result",
+		QueueTimeOutURL:    "https://example.com/status/timeout",
+		Remarks:            "Test Transaction Status",
+		Occasion:           "Test",
+	})
 	if err != nil {
 		log.Printf("Failed to query transaction status: %v", err)
 	} else {
@@ -200,16 +200,16 @@ func main() {
 
 	// Example: Account Balance
 	fmt.Println("\n9. Querying Account Balance...")
-	balanceResponse, err := client.AccountBalance(
-		"TestInitiator",                              // Initiator
-		"SecurityCredential",                         // Security Credential
-		"AccountBalance",                             // Command ID
-		shortCode,                                    // Party A (Short code)
-		4,                                            // Identifier Type
-		"Test Account Balance",                       // Remarks
-		"https://example.com/balance/timeout",        // Queue Timeout URL
-		"https://example.com/balance/result",         // Result URL
-	)
+	balanceResponse, err := client.AccountBalance(mpesa.AccountBalanceParams{
+		Initiator:          "TestInitiator",
+		SecurityCredential: "SecurityCredential",
+		CommandID:          "AccountBalance",
+		PartyA:             shortCode,
+		IdentifierType:     4,
+		Remarks:            "Test Account Balance",
+		QueueTimeOutURL:    "https://example.com/balance/timeout",
+		ResultURL:          "https://example.com/balance/result",
+	})
 	if err != nil {
 		log.Printf("Failed to query account balance: %v", err)
 	} else {
@@ -218,19 +218,19 @@ func main() {
 
 	// Example: Payment Reversal
 	fmt.Println("\n10. Reversing Transaction...")
-	reversalResponse, err := client.Reversal(
-		"TestInitiator",                              // Initiator
-		"SecurityCredential",                         // Security Credential
-		"TransactionReversal",                        // Command ID
-		"LKXXXX1234",                                 // Transaction ID
-		1,                                            // Amount
-		shortCode,                                    // Receiver Party
-		4,                                            // Receiver Identifier Type
-		"https://example.com/reversal/result",        // Result URL
-		"https://example.com/reversal/timeout",       // Queue Timeout URL
-		"Test Reversal",                              // Remarks
-		"Test",                                       // Occasion
-	)
+	reversalResponse, err := client.Reversal(mpesa.ReversalParams{
+		Initiator:              "TestInitiator",
+		SecurityCredential:     "SecurityCredential",
+		CommandID:              "TransactionReversal",
+		TransactionID:          "LKXXXX1234",
+		Amount:                 1,
+		ReceiverParty:          shortCode,
+		ReceiverIdentifierType: 4,
+		ResultURL:              "https://example.com/reversal/result",
+		QueueTimeOutURL:        "https://example.com/reversal/timeout",
+		Remarks:                "Test Reversal",
+		Occasion:               "Test",
+	})
 	if err != nil {
 		log.Printf("Failed to reverse transaction: %v", err)
 	} else {
