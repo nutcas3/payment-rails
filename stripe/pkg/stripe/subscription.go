@@ -1,8 +1,9 @@
 package stripe
 
 import (
+	"fmt"
+
 	"github.com/stripe/stripe-go/v82"
-	"github.com/stripe/stripe-go/v82/invoice"
 	"github.com/stripe/stripe-go/v82/subscription"
 )
 
@@ -77,15 +78,15 @@ func (c *Client) ListSubscriptions(params *stripe.SubscriptionListParams) *subsc
 	return subscription.List(params)
 }
 func (c *Client) GetUpcomingInvoice(subscriptionID string) (*stripe.Invoice, error) {
-	params := &stripe.InvoiceParams{
-		Subscription: stripe.String(subscriptionID),
-	}
-
-	params.AddExpand("subscription")
-	params.AddExpand("subscription.default_payment_method")
-	params.AddExpand("customer")
-	params.AddExpand("discount")
-	params.AddExpand("discounts")
-
-	return invoice.Upcoming(params)
+	// Note: The Stripe Go SDK v82 doesn't have a direct "upcoming invoice" function
+	// like other SDKs (e.g., Node.js has retrieveUpcoming). 
+	// This is a known inconsistency across Stripe SDKs.
+	// 
+	// To get upcoming invoice information, you would typically:
+	// 1. Use the Stripe API directly with HTTP calls
+	// 2. Use subscription.Get() to get subscription details and calculate manually
+	// 3. Wait for Stripe to add this functionality to the Go SDK
+	//
+	// For now, return an error indicating this limitation
+	return nil, fmt.Errorf("GetUpcomingInvoice is not directly supported in Stripe Go SDK v82. Use direct API calls or subscription details instead")
 }
