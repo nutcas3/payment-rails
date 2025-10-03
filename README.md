@@ -13,5 +13,8 @@ A comprehensive payment integration library for African payment providers and gl
 - See the full NCBA SDK documentation [here](ncba/README.md).
 - See the full SasaPay SDK documentation [here](sasapay/README.md).
 
+### South African Banks
+- See the full FNB Integration Channel SDK documentation [here](fnb/README.md).
+
 ### Global Payment Processors
 - See the full Stripe SDK documentation [here](stripe/README.md).
