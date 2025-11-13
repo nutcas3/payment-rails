@@ -15,7 +15,7 @@ const (
 	callbackHeader = "X-Callback-Url"
 	authHeader     = "Authorization"
 	refHeader      = "X-Reference-Id"
-	contentHeader  = "application/json"
+	contentHeader  = "Content-Type"
 )
 
 type Remittance struct {
