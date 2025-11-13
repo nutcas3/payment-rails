@@ -1,7 +1,7 @@
 package mpesa
 
 import (
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type TaxRemittanceRequest struct {
@@ -24,18 +24,18 @@ type TaxRemittanceResponse struct {
 
 func (c *Client) RemitTax(req TaxRemittanceRequest) (*TaxRemittanceResponse, error) {
 	internalReq := daraja.TaxRemittanceRequestBody{
-		Initiator:             req.Initiator,
-		SecurityCredential:    req.SecurityCredential,
-		CommandID:             daraja.CommandIDPayTaxToKRA, // Only PayTaxToKRA is allowed for this API
-		SenderIdentifierType:  "4",                         // Only type 4 is allowed for this API
-		RecieverIdentifierType: "4",                        // Only type 4 is allowed for this API
-		Amount:                req.Amount,
-		PartyA:                req.PartyA,
-		PartyB:                "572572",                    // Only 572572 (KRA) is allowed for this API
-		AccountReference:      req.AccountReference,
-		Remarks:               req.Remarks,
-		QueueTimeOutURL:       req.QueueTimeOutURL,
-		ResultURL:             req.ResultURL,
+		Initiator:              req.Initiator,
+		SecurityCredential:     req.SecurityCredential,
+		CommandID:              daraja.CommandIDPayTaxToKRA, // Only PayTaxToKRA is allowed for this API
+		SenderIdentifierType:   "4",                         // Only type 4 is allowed for this API
+		RecieverIdentifierType: "4",                         // Only type 4 is allowed for this API
+		Amount:                 req.Amount,
+		PartyA:                 req.PartyA,
+		PartyB:                 "572572", // Only 572572 (KRA) is allowed for this API
+		AccountReference:       req.AccountReference,
+		Remarks:                req.Remarks,
+		QueueTimeOutURL:        req.QueueTimeOutURL,
+		ResultURL:              req.ResultURL,
 	}
 
 	resp, err := c.Service.RemitTax(internalReq)

@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"payment-rails/mpesa"
+	"github.com/nutcas3/payment-rails/mpesa"
 	"time"
 )
 

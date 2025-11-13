@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"payment-rails/mpesa"
+	"github.com/nutcas3/payment-rails/mpesa"
 )
 
 func main() {

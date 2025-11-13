@@ -65,12 +65,12 @@ type BillManagerCancelInvoiceResponse struct {
 }
 
 type BillManagerPaymentRequest struct {
-	TransactionID     string `json:"transactionId"`
-	PaidAmount        string `json:"paidAmount"`
-	MSISDN            string `json:"msisdn"`
-	DateCreated       string `json:"dateCreated"`
-	AccountReference  string `json:"accountReference"`
-	ShortCode         string `json:"shortCode"`
+	TransactionID    string `json:"transactionId"`
+	PaidAmount       string `json:"paidAmount"`
+	MSISDN           string `json:"msisdn"`
+	DateCreated      string `json:"dateCreated"`
+	AccountReference string `json:"accountReference"`
+	ShortCode        string `json:"shortCode"`
 }
 
 type BillManagerPaymentResponse struct {

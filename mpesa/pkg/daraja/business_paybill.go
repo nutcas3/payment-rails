@@ -7,20 +7,20 @@ import (
 )
 
 type BusinessPayBillRequest struct {
-	Initiator             string `json:"Initiator"`
-	SecurityCredential    string `json:"SecurityCredential"`
-	CommandID             string `json:"CommandID"`
-	SenderIdentifierType  string `json:"SenderIdentifierType"`
+	Initiator              string `json:"Initiator"`
+	SecurityCredential     string `json:"SecurityCredential"`
+	CommandID              string `json:"CommandID"`
+	SenderIdentifierType   string `json:"SenderIdentifierType"`
 	RecieverIdentifierType string `json:"RecieverIdentifierType"`
-	Amount                string `json:"Amount"`
-	PartyA                string `json:"PartyA"`
-	PartyB                string `json:"PartyB"`
-	AccountReference      string `json:"AccountReference"`
-	Requester             string `json:"Requester,omitempty"`
-	Remarks               string `json:"Remarks"`
-	QueueTimeOutURL       string `json:"QueueTimeOutURL"`
-	ResultURL             string `json:"ResultURL"`
-	Occasion              string `json:"Occasion,omitempty"`
+	Amount                 string `json:"Amount"`
+	PartyA                 string `json:"PartyA"`
+	PartyB                 string `json:"PartyB"`
+	AccountReference       string `json:"AccountReference"`
+	Requester              string `json:"Requester,omitempty"`
+	Remarks                string `json:"Remarks"`
+	QueueTimeOutURL        string `json:"QueueTimeOutURL"`
+	ResultURL              string `json:"ResultURL"`
+	Occasion               string `json:"Occasion,omitempty"`
 }
 
 type BusinessPayBillResponse struct {

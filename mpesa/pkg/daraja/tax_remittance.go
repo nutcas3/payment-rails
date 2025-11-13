@@ -8,23 +8,23 @@ import (
 
 const (
 	TaxRemittanceURL = "/mpesa/b2b/v1/remittax"
-	
+
 	CommandIDPayTaxToKRA = "PayTaxToKRA"
 )
 
 type TaxRemittanceRequestBody struct {
-	Initiator             string `json:"Initiator"`
-	SecurityCredential    string `json:"SecurityCredential"`
-	CommandID             string `json:"CommandID"`
-	SenderIdentifierType  string `json:"SenderIdentifierType"`
+	Initiator              string `json:"Initiator"`
+	SecurityCredential     string `json:"SecurityCredential"`
+	CommandID              string `json:"CommandID"`
+	SenderIdentifierType   string `json:"SenderIdentifierType"`
 	RecieverIdentifierType string `json:"RecieverIdentifierType"`
-	Amount                string `json:"Amount"`
-	PartyA                string `json:"PartyA"`
-	PartyB                string `json:"PartyB"`
-	AccountReference      string `json:"AccountReference"`
-	Remarks               string `json:"Remarks"`
-	QueueTimeOutURL       string `json:"QueueTimeOutURL"`
-	ResultURL             string `json:"ResultURL"`
+	Amount                 string `json:"Amount"`
+	PartyA                 string `json:"PartyA"`
+	PartyB                 string `json:"PartyB"`
+	AccountReference       string `json:"AccountReference"`
+	Remarks                string `json:"Remarks"`
+	QueueTimeOutURL        string `json:"QueueTimeOutURL"`
+	ResultURL              string `json:"ResultURL"`
 }
 
 type TaxRemittanceResponse struct {
@@ -34,7 +34,7 @@ type TaxRemittanceResponse struct {
 	ResponseDescription      string `json:"ResponseDescription"`
 }
 
-func (s *Service) RemitTax(body TaxRemittanceRequestBody) (*TaxRemittanceResponse, error) {	// Validate required fields
+func (s *Service) RemitTax(body TaxRemittanceRequestBody) (*TaxRemittanceResponse, error) { // Validate required fields
 	if body.Initiator == "" {
 		return nil, fmt.Errorf("initiator is required")
 	}

@@ -7,19 +7,19 @@ import (
 )
 
 type B2CTopUpRequest struct {
-	Initiator             string `json:"Initiator"`
-	SecurityCredential    string `json:"SecurityCredential"`
-	CommandID             string `json:"CommandID"`
-	SenderIdentifierType  string `json:"SenderIdentifierType"`
+	Initiator              string `json:"Initiator"`
+	SecurityCredential     string `json:"SecurityCredential"`
+	CommandID              string `json:"CommandID"`
+	SenderIdentifierType   string `json:"SenderIdentifierType"`
 	RecieverIdentifierType string `json:"RecieverIdentifierType"`
-	Amount                string `json:"Amount"`
-	PartyA                string `json:"PartyA"`
-	PartyB                string `json:"PartyB"`
-	AccountReference      string `json:"AccountReference,omitempty"`
-	Requester             string `json:"Requester,omitempty"`
-	Remarks               string `json:"Remarks"`
-	QueueTimeOutURL       string `json:"QueueTimeOutURL"`
-	ResultURL             string `json:"ResultURL"`
+	Amount                 string `json:"Amount"`
+	PartyA                 string `json:"PartyA"`
+	PartyB                 string `json:"PartyB"`
+	AccountReference       string `json:"AccountReference,omitempty"`
+	Requester              string `json:"Requester,omitempty"`
+	Remarks                string `json:"Remarks"`
+	QueueTimeOutURL        string `json:"QueueTimeOutURL"`
+	ResultURL              string `json:"ResultURL"`
 }
 
 type B2CTopUpResponse struct {

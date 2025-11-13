@@ -3,7 +3,7 @@ package jenga
 import (
 	"fmt"
 	"net/http"
-	"payment-rails/jenga/pkg/api"
+	"github.com/nutcas3/payment-rails/jenga/pkg/api"
 )
 
 type Client struct {

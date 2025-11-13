@@ -2,7 +2,7 @@ package mpesa
 
 import (
 	"net/http"
-	"payment-rails/mpesa/pkg/daraja"
+	"github.com/nutcas3/payment-rails/mpesa/pkg/daraja"
 )
 
 type Environment string
@@ -21,7 +21,7 @@ func NewClient(apiKey, consumerSecret, passKey string, environment Environment) 
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &Client{
 		Service: service,
 	}, nil

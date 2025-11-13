@@ -1,7 +1,7 @@
 package airtel
 
 import (
-	"payment-rails/airtel/pkg/api"
+	"github.com/nutcas3/payment-rails/airtel/pkg/api"
 )
 
 type Client struct {

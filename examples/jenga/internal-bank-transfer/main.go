@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"payment-rails/jenga"
-	"payment-rails/jenga/pkg/api"
+	"github.com/nutcas3/payment-rails/jenga"
+	"github.com/nutcas3/payment-rails/jenga/pkg/api"
 )
 
 func main() {
@@ -25,13 +25,13 @@ func main() {
 
 	// Generate a unique reference number
 	reference := jenga.GenerateReference()
-	
+
 	// Current date in YYYY-MM-DD format
 	currentDate := time.Now().Format("2006-01-02")
 
 	// Example: Send Money within Equity Bank (Internal Bank Transfer)
 	fmt.Println("Sending money within Equity Bank...")
-	
+
 	// Create the internal bank transfer request
 	internalTransferReq := api.SendMoneyRequest{
 		Source: api.Source{
@@ -69,10 +69,10 @@ func main() {
 	fmt.Printf("Reference: %s\n", response.Reference)
 	fmt.Printf("Transaction ID: %s\n", response.Data.TransactionID)
 	fmt.Printf("Transaction Status: %s\n", response.Data.Status)
-	
+
 	// Example: Cross-border internal transfer (e.g., Kenya to Uganda)
 	fmt.Println("\nSending money across borders within Equity Bank...")
-	
+
 	crossBorderReq := api.SendMoneyRequest{
 		Source: api.Source{
 			CountryCode:   "KE", // Kenya

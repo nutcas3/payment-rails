@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"payment-rails/airtel/pkg/api"
+	"github.com/nutcas3/payment-rails/airtel/pkg/api"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	clientID := os.Getenv("AIRTEL_CLIENT_ID")
 	clientSecret := os.Getenv("AIRTEL_CLIENT_SECRET")
 	publicKey := os.Getenv("AIRTEL_PUBLIC_KEY")
-	
+
 	if clientID == "" || clientSecret == "" {
 		log.Fatal("AIRTEL_CLIENT_ID and AIRTEL_CLIENT_SECRET environment variables must be set")
 	}
@@ -46,21 +46,21 @@ func main() {
 	if err != nil {
 		log.Printf("Failed to initiate USSD Push: %v", err)
 	} else {
-		fmt.Printf("USSD Push initiated: Success=%v, Message=%s\n", 
-			collectionResp.Status.Success, 
+		fmt.Printf("USSD Push initiated: Success=%v, Message=%s\n",
+			collectionResp.Status.Success,
 			collectionResp.Status.Message)
-		
+
 		if collectionResp.Status.Success {
 			// Check transaction status after a few seconds
 			fmt.Println("\nChecking transaction status...")
 			time.Sleep(5 * time.Second)
-			
+
 			statusResp, err := airtel.GetTransactionStatus(txID)
 			if err != nil {
 				log.Printf("Failed to check transaction status: %v", err)
 			} else {
-				fmt.Printf("Transaction Status: %s, Message: %s\n", 
-					statusResp.Data.Transaction.Status, 
+				fmt.Printf("Transaction Status: %s, Message: %s\n",
+					statusResp.Data.Transaction.Status,
 					statusResp.Status.Message)
 			}
 		}
@@ -76,21 +76,21 @@ func main() {
 	if err != nil {
 		log.Printf("Failed to initiate disbursement: %v", err)
 	} else {
-		fmt.Printf("Disbursement initiated: Success=%v, Message=%s\n", 
-			disbResp.Status.Success, 
+		fmt.Printf("Disbursement initiated: Success=%v, Message=%s\n",
+			disbResp.Status.Success,
 			disbResp.Status.Message)
-		
+
 		if disbResp.Status.Success {
 			// Check disbursement status after a few seconds
 			fmt.Println("\nChecking disbursement status...")
 			time.Sleep(5 * time.Second)
-			
+
 			disbStatusResp, err := airtel.GetDisbursementStatus(disbTxID)
 			if err != nil {
 				log.Printf("Failed to check disbursement status: %v", err)
 			} else {
-				fmt.Printf("Disbursement Status: %s, Message: %s\n", 
-					disbStatusResp.Data.Transaction.Status, 
+				fmt.Printf("Disbursement Status: %s, Message: %s\n",
+					disbStatusResp.Data.Transaction.Status,
 					disbStatusResp.Status.Message)
 			}
 		}

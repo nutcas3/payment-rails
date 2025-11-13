@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"payment-rails/jenga"
-	"payment-rails/jenga/pkg/api"
+	"github.com/nutcas3/payment-rails/jenga"
+	"github.com/nutcas3/payment-rails/jenga/pkg/api"
 )
 
 func main() {

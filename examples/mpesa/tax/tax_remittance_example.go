@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"payment-rails/mpesa"
+	"github.com/nutcas3/payment-rails/mpesa"
 	"time"
 )
 
@@ -57,7 +57,7 @@ func main() {
 	fmt.Printf("Response Description: %s\n", response.ResponseDescription)
 	fmt.Printf("Originator Conversation ID: %s\n", response.OriginatorConversationID)
 	fmt.Printf("Conversation ID: %s\n", response.ConversationID)
-	
+
 	fmt.Println("\nNote: The final result will be sent to your callback URL with details including:")
 	fmt.Println("- Result code and description")
 	fmt.Println("- Transaction ID")

@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"payment-rails/mpesa"
+	"github.com/nutcas3/payment-rails/mpesa"
 	"time"
 )
 
@@ -55,7 +55,7 @@ func main() {
 	fmt.Printf("Response Code: %s\n", ratibaResponse.ResponseCode)
 	fmt.Printf("Response Description: %s\n", ratibaResponse.ResponseDescription)
 	fmt.Printf("Response Reference ID: %s\n", ratibaResponse.ResponseRefID)
-	
+
 	fmt.Println("\nNote: The M-Pesa Ratiba API is a commercial API that requires a contract with Safaricom.")
 	fmt.Println("For production use, you need to contact Safaricom at apisupport@safaricom.co.ke after testing.")
 }

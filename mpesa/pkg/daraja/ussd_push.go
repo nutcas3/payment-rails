@@ -11,13 +11,13 @@ const (
 )
 
 type UssdPushRequestBody struct {
-	PrimaryShortCode   string `json:"primaryShortCode"`
-	ReceiverShortCode  string `json:"receiverShortCode"`
-	Amount             string `json:"amount"`
-	PaymentRef         string `json:"paymentRef"`
-	CallbackURL        string `json:"callbackUrl"`
-	PartnerName        string `json:"partnerName"`
-	RequestRefID       string `json:"RequestRefID"`
+	PrimaryShortCode  string `json:"primaryShortCode"`
+	ReceiverShortCode string `json:"receiverShortCode"`
+	Amount            string `json:"amount"`
+	PaymentRef        string `json:"paymentRef"`
+	CallbackURL       string `json:"callbackUrl"`
+	PartnerName       string `json:"partnerName"`
+	RequestRefID      string `json:"RequestRefID"`
 }
 
 type UssdPushResponse struct {
@@ -26,15 +26,15 @@ type UssdPushResponse struct {
 }
 
 type UssdPushCallbackResponse struct {
-	ResultCode        string `json:"resultCode"`
-	ResultDesc        string `json:"resultDesc"`
-	Amount            string `json:"amount"`
-	RequestID         string `json:"requestId"`
-	ResultType        string `json:"resultType,omitempty"`
-	ConversationID    string `json:"conversationID,omitempty"`
-	TransactionID     string `json:"transactionId,omitempty"`
-	Status            string `json:"status,omitempty"`
-	PaymentReference  string `json:"paymentReference,omitempty"`
+	ResultCode       string `json:"resultCode"`
+	ResultDesc       string `json:"resultDesc"`
+	Amount           string `json:"amount"`
+	RequestID        string `json:"requestId"`
+	ResultType       string `json:"resultType,omitempty"`
+	ConversationID   string `json:"conversationID,omitempty"`
+	TransactionID    string `json:"transactionId,omitempty"`
+	Status           string `json:"status,omitempty"`
+	PaymentReference string `json:"paymentReference,omitempty"`
 }
 
 func (s *Service) UssdPush(body UssdPushRequestBody) (*UssdPushResponse, error) {
