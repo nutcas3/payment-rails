@@ -10,6 +10,7 @@ A comprehensive payment integration library for African payment providers and gl
 - See the full Co-op Bank SDK documentation [here](coop/README.md).
 - See the full KCB Buni SDK documentation [here](kcb/README.md).
 - See the full Mpesa SDK documentation [here](mpesa/README.md).
+- See the full MTN Mobile Money (MoMo) SDK documentation [here](momo/README.md).
 - See the full NCBA SDK documentation [here](ncba/README.md).
 - See the full SasaPay SDK documentation [here](sasapay/README.md).
 
