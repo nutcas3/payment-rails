@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"payment-rails/stripe"
+	"github.com/nutcas3/payment-rails/stripe"
 )
 
 func main() {

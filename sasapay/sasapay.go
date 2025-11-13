@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"payment-rails/sasapay/pkg/api"
+	"github.com/nutcas3/payment-rails/sasapay/pkg/api"
 )
 
 type Client struct {

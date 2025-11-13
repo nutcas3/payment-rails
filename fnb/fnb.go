@@ -1,7 +1,7 @@
 package fnb
 
 import (
-	"payment-rails/fnb/pkg/api"
+	"github.com/nutcas3/payment-rails/fnb/pkg/api"
 )
 
 

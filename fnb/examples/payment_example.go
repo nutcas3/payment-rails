@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"payment-rails/fnb"
-	"payment-rails/fnb/pkg/api"
+	"github.com/nutcas3/payment-rails/fnb"
+	"github.com/nutcas3/payment-rails/fnb/pkg/api"
 )
 
 func main() {

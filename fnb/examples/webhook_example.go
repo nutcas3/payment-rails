@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"payment-rails/fnb/pkg/api"
+	"github.com/nutcas3/payment-rails/fnb/pkg/api"
 )
 
 // This example demonstrates how to set up a webhook endpoint to receive

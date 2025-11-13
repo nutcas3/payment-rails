@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"payment-rails/coop"
-	"payment-rails/coop/pkg/api"
+	"github.com/nutcas3/payment-rails/coop"
+	"github.com/nutcas3/payment-rails/coop/pkg/api"
 )
 
 func main() {
