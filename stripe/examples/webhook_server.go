@@ -9,7 +9,7 @@ import (
 
 	stripeSDK "github.com/stripe/stripe-go/v82"
 	"github.com/stripe/stripe-go/v82/webhook"
-	"payment-rails/stripe"
+	"github.com/nutcas3/payment-rails/stripe"
 )
 
 var client *stripe.Client

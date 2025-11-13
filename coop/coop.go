@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"payment-rails/coop/pkg/api"
+	"github.com/nutcas3/payment-rails/coop/pkg/api"
 )
 
 type Client struct {

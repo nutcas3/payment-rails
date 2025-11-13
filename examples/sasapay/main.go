@@ -7,8 +7,8 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"payment-rails/sasapay"
-	"payment-rails/sasapay/pkg/api"
+	"github.com/nutcas3/payment-rails/sasapay"
+	"github.com/nutcas3/payment-rails/sasapay/pkg/api"
 )
 
 func main() {

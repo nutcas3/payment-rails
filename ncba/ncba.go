@@ -1,7 +1,7 @@
 package ncba
 
 import (
-	"payment-rails/ncba/pkg/api"
+	"github.com/nutcas3/payment-rails/ncba/pkg/api"
 )
 
 type Client struct {

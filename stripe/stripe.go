@@ -2,7 +2,7 @@ package stripe
 
 import (
 	"github.com/stripe/stripe-go/v82"
-	stripeClient "payment-rails/stripe/pkg/stripe"
+	stripeClient "github.com/nutcas3/payment-rails/stripe/pkg/stripe"
 )
 
 // Re-export types from the internal package

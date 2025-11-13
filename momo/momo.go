@@ -2,7 +2,11 @@ package momo
 
 import (
 	"net/http"
-	"payment-rails/momo/pkg/api"
+
+	"github.com/nutcas3/payment-rails/momo/collection"
+	"github.com/nutcas3/payment-rails/momo/common"
+	"github.com/nutcas3/payment-rails/momo/disbursement"
+	"github.com/nutcas3/payment-rails/momo/remittance"
 )
 
 type Environment string
@@ -12,31 +16,79 @@ const (
 	PRODUCTION Environment = "production"
 )
 
-type Client struct {
-	API *api.Client
+// ClientConfig holds the configuration for creating a new Momo client
+type ClientConfig struct {
+	Environment                 string
+	APIKey                      string
+	APISecret                   string
+	CollectionSubscriptionKey   string
+	DisbursementSubscriptionKey string
+	RemittanceSubscriptionKey   string
+	HTTPClient                  *http.Client
 }
 
-func NewClient(apiUser, apiKey, subscriptionKey string, environment Environment) (*Client, error) {
-	apiClient, err := api.New(apiUser, apiKey, subscriptionKey, api.Environment(environment))
+type Client struct {
+	Collection   collection.Service
+	Disbursement disbursement.Service
+	Remittance   remittance.Service
+	backend      common.Backend
+	cache        common.CacheStore
+}
+
+// New creates a new Momo client with the given configuration
+func New(cfg ClientConfig) (*Client, error) {
+	backendCfg := &common.BackendConfig{
+		Environment: cfg.Environment,
+		HTTPClient:  cfg.HTTPClient,
+	}
+
+	backend, err := common.NewBackend(backendCfg)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Client{
-		API: apiClient,
-	}, nil
-}
+	cache := common.NewCache()
 
-func (c *Client) SetHttpClient(httpClient *http.Client) {
-	c.API.SetHttpClient(httpClient)
-}
-func (c *Client) GetCollectionToken() (string, error) {
-	return c.API.GetCollectionToken()
-}
+	client := &Client{
+		backend: backend,
+		cache:   cache,
+	}
 
-func (c *Client) GetDisbursementToken() (string, error) {
-	return c.API.GetDisbursementToken()
-}
-func (c *Client) GetRemittanceToken() (string, error) {
-	return c.API.GetRemittanceToken()
+	// Initialize Collection service if subscription key is provided
+	if cfg.CollectionSubscriptionKey != "" {
+		client.Collection = collection.NewCollection(
+			cfg.CollectionSubscriptionKey,
+			cfg.APIKey,
+			cfg.APISecret,
+			cfg.Environment,
+			backend,
+			cache,
+		)
+	}
+
+	// Initialize Disbursement service if subscription key is provided
+	if cfg.DisbursementSubscriptionKey != "" {
+		client.Disbursement = disbursement.NewDisbursement(
+			cfg.DisbursementSubscriptionKey,
+			cfg.APIKey,
+			cfg.APISecret,
+			cfg.Environment,
+			backend,
+			cache,
+		)
+	}
+
+	// Initialize Remittance service if subscription key is provided
+	if cfg.RemittanceSubscriptionKey != "" {
+		client.Remittance = remittance.NewRemittance(
+			cfg.RemittanceSubscriptionKey,
+			cfg.APIKey,
+			cfg.APISecret,
+			cfg.Environment,
+			backend,
+			cache,
+		)
+	}
+
+	return client, nil
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"payment-rails/ncba"
-	"payment-rails/ncba/pkg/api"
+	"github.com/nutcas3/payment-rails/ncba"
+	"github.com/nutcas3/payment-rails/ncba/pkg/api"
 )
 
 func main() {
