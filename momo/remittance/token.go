@@ -46,7 +46,7 @@ func (r Remittance) getAccessToken(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	r.cache.Set(authTokenKey, resp, time.Duration(resp.ExpiresIn)*time.Second)
+	r.cache.Set(authTokenKey, resp.AccessToken, time.Duration(resp.ExpiresIn)*time.Second)
 
 	return resp.AccessToken, nil
 }
@@ -80,7 +80,7 @@ func (r Remittance) getOauth2Token(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	r.cache.Set(oauth2TokenKey, resp, time.Duration(resp.ExpiresIn)*time.Second)
+	r.cache.Set(oauth2TokenKey, resp.AccessToken, time.Duration(resp.ExpiresIn)*time.Second)
 
 	return resp.AccessToken, nil
 }
@@ -151,7 +151,7 @@ func (r Remittance) BcAuthorize(ctx context.Context, callbackURL string) (string
 		return "", err
 	}
 
-	r.cache.Set(bcAuthKey, resp, time.Duration(resp.ExpiresIn)*time.Second)
+	r.cache.Set(bcAuthKey, resp.AuthRequestID, time.Duration(resp.ExpiresIn)*time.Second)
 
 	return resp.AuthRequestID, nil
 }

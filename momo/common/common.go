@@ -130,9 +130,11 @@ func (b *BackendImpl) NewRequest(
 		}
 
 		if params.Path != nil {
+			pathSegments := []string{strings.TrimSuffix(reqURL.Path, "/")}
 			for _, v := range params.Path {
-				reqURL.JoinPath(url.PathEscape(v))
+				pathSegments = append(pathSegments, url.PathEscape(v))
 			}
+			reqURL.Path = strings.Join(pathSegments, "/")
 		}
 	}
 

@@ -46,7 +46,7 @@ func (c Collection) getAccessToken(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	c.cache.Set(authTokenKey, resp, time.Duration(resp.ExpiresIn)*time.Second)
+	c.cache.Set(authTokenKey, resp.AccessToken, time.Duration(resp.ExpiresIn)*time.Second)
 
 	return resp.AccessToken, nil
 }
@@ -80,7 +80,7 @@ func (c Collection) getOauth2Token(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	c.cache.Set(oauth2TokenKey, resp, time.Duration(resp.ExpiresIn)*time.Second)
+	c.cache.Set(oauth2TokenKey, resp.AccessToken, time.Duration(resp.ExpiresIn)*time.Second)
 
 	return resp.AccessToken, nil
 }
@@ -151,7 +151,7 @@ func (c Collection) BcAuthorize(ctx context.Context, callbackURL string) (string
 		return "", err
 	}
 
-	c.cache.Set(bcAuthKey, resp, time.Duration(resp.ExpiresIn)*time.Second)
+	c.cache.Set(bcAuthKey, resp.AuthRequestID, time.Duration(resp.ExpiresIn)*time.Second)
 
 	return resp.AuthRequestID, nil
 }

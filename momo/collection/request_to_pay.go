@@ -108,9 +108,9 @@ func (c Collection) RequestToPayTransactionStatus(ctx context.Context, refID uui
 // Helper for continously polling status of a request to pay transaction
 func (c Collection) pollStatus(ctx context.Context, refID uuid.UUID) (*types.RequestToPayStatus, error) {
 	var (
-		resp         *types.RequestToPayStatus
-		err          error
-		initialDelay = 5
+		resp    *types.RequestToPayStatus
+		err     error
+		attempt = 0
 	)
 
 	for {
@@ -122,12 +122,27 @@ func (c Collection) pollStatus(ctx context.Context, refID uuid.UUID) (*types.Req
 		if resp.Status == "SUCCESSFUL" {
 			break
 		} else if resp.Status == "FAILED" {
-			return nil, fmt.Errorf("transaction failed due to: %w", err)
-		} else {
-			delay := time.Duration(1<<uint(initialDelay)) * time.Second
-			jitter := time.Duration(rand.Intn(int(delay))) * time.Millisecond
-			time.Sleep(delay + jitter)
+			reason := "unknown reason"
+			if resp.Reason.Message != "" {
+				reason = resp.Reason.Message
+			} else if resp.Reason.Code != "" {
+				reason = resp.Reason.Code
+			}
+			return nil, fmt.Errorf("transaction failed: %s", reason)
 		}
+
+		attempt++
+		if attempt > 6 {
+			return nil, fmt.Errorf("timed out waiting for transaction status")
+		}
+
+		// Exponential backoff with cap at 30 seconds
+		delay := time.Second * time.Duration(1<<uint(attempt))
+		if delay > 30*time.Second {
+			delay = 30 * time.Second
+		}
+		jitter := time.Duration(rand.Int63n(int64(delay / 4)))
+		time.Sleep(delay + jitter)
 	}
 
 	return resp, nil
