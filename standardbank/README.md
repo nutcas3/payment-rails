@@ -223,10 +223,8 @@ Always provide a valid webhook secret obtained from your Standard Bank API dashb
 
 ### Setting Up Webhook Handler
 
-// Set webhook secret for signature verification
-// WARNING: An empty secret will result in a nil handler that rejects all webhooks
-
 ```go
+// WARNING: An empty secret will result in a nil handler that rejects all webhooks
 // Set webhook secret for signature verification
 client.SetWebhookSecret("your-webhook-secret")
 
@@ -282,7 +280,7 @@ export STANDARD_BANK_WEBHOOK_SECRET="your-webhook-secret"
 - `Providers()` - Returns providers service
 - `SetWebhookSecret(secret string)` - Set webhook secret
 - `HandleWebhook(w, r)` - Handle incoming webhook
-- `RegisterWebhookHandler(eventType, handler)` - Register webhook handler (requires WebhookSecret)
+- `RegisterWebhookHandler(eventType, handler)` - Register webhook handler (requires SetWebhookSecret to be called)
 
 ### Payments Service
 
