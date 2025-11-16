@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -50,7 +51,8 @@ type Logger interface {
 type DefaultLogger struct{}
 
 func (l *DefaultLogger) Log(level, message string, fields map[string]interface{}) {
-	log.Printf("[%s] %s: %+v", level, message, fields)
+	sanitized := sanitizeFields(fields)
+	log.Printf("[%s] %s: %+v", level, message, sanitized)
 }
 
 func NewClient(config *ClientConfig) *Client {
@@ -103,12 +105,12 @@ type AuthResponse struct {
 }
 
 type ErrorResponse struct {
-	Error            string            `json:"error,omitempty"`
-	ErrorDescription string            `json:"error_description,omitempty"`
-	Message          string            `json:"message,omitempty"`
-	Code             string            `json:"code,omitempty"`
-	Status           int               `json:"status,omitempty"`
-	Details          map[string]string `json:"details,omitempty"`
+	Error            string                 `json:"error,omitempty"`
+	ErrorDescription string                 `json:"error_description,omitempty"`
+	Message          string                 `json:"message,omitempty"`
+	Code             string                 `json:"code,omitempty"`
+	Status           int                    `json:"status,omitempty"`
+	Details          map[string]interface{} `json:"details,omitempty"`
 }
 
 func (e *ErrorResponse) Error() string {
@@ -159,6 +161,10 @@ func (c *Client) Authenticate(ctx context.Context) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
+	if c.apiKey != "" {
+		req.Header.Set("X-API-Key", c.apiKey)
+	}
+
 	c.logger.Log("DEBUG", "Authenticating with Standard Bank API", map[string]interface{}{
 		"url": req.URL.String(),
 	})
@@ -201,7 +207,12 @@ func (c *Client) Authenticate(ctx context.Context) error {
 
 	c.accessToken = authResp.AccessToken
 	expirySeconds := time.Duration(authResp.ExpiresIn) * time.Second
-	c.tokenExpiry = time.Now().Add(expirySeconds - TokenRefreshBuffer)
+
+	if expirySeconds <= TokenRefreshBuffer {
+		c.tokenExpiry = time.Now().Add(expirySeconds / 2)
+	} else {
+		c.tokenExpiry = time.Now().Add(expirySeconds - TokenRefreshBuffer)
+	}
 
 	c.logger.Log("INFO", "Successfully authenticated", map[string]interface{}{
 		"expires_in": authResp.ExpiresIn,
@@ -307,4 +318,26 @@ func (c *Client) GetHTTPClient() *http.Client {
 
 func (c *Client) GetBaseURL() string {
 	return c.baseURL
+}
+
+func sanitizeFields(fields map[string]interface{}) map[string]interface{} {
+	sanitized := make(map[string]interface{})
+	sensitiveKeys := []string{"client_secret", "access_token", "authorization", "x-api-key"}
+
+	for k, v := range fields {
+		isSensitive := false
+		lowerKey := strings.ToLower(k)
+		for _, sensitive := range sensitiveKeys {
+			if strings.Contains(lowerKey, sensitive) {
+				isSensitive = true
+				break
+			}
+		}
+		if isSensitive {
+			sanitized[k] = "[REDACTED]"
+		} else {
+			sanitized[k] = v
+		}
+	}
+	return sanitized
 }

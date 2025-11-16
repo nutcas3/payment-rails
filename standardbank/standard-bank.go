@@ -161,9 +161,10 @@ func (p *Providers) Pay(ctx context.Context, req api.ProviderPaymentRequest) (*a
 	return p.client.apiClient.ExecuteProviderPayment(ctx, req)
 }
 
-func (c *Client) RegisterWebhookHandler(eventType string, handler api.WebhookEventHandler) {
+func (c *Client) RegisterWebhookHandler(eventType string, handler api.WebhookEventHandler) error {
 	if c.webhookHandler == nil {
-		c.webhookHandler = api.NewWebhookHandler("")
+		return fmt.Errorf("webhook handler not initialized, call SetWebhookSecret first")
 	}
 	c.webhookHandler.RegisterHandler(eventType, handler)
+	return nil
 }

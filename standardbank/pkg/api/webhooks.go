@@ -40,6 +40,9 @@ const (
 )
 
 func NewWebhookHandler(webhookSecret string) *WebhookHandler {
+	if webhookSecret == "" {
+		return nil
+	}
 	return &WebhookHandler{
 		webhookSecret: webhookSecret,
 		handlers:      make(map[string]WebhookEventHandler),
@@ -56,12 +59,17 @@ func (wh *WebhookHandler) HandleWebhook(w http.ResponseWriter, r *http.Request) 
 		return fmt.Errorf("invalid method: %s", r.Method)
 	}
 
+	if r.Body == nil {
+		http.Error(w, "Request body is required", http.StatusBadRequest)
+		return fmt.Errorf("request body is nil")
+	}
+	defer r.Body.Close()
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusBadRequest)
 		return fmt.Errorf("failed to read request body: %w", err)
 	}
-	defer r.Body.Close()
 
 	signature := r.Header.Get("X-StandardBank-Signature")
 	if !wh.verifySignature(body, signature) {
@@ -102,8 +110,7 @@ func (wh *WebhookHandler) HandleWebhook(w http.ResponseWriter, r *http.Request) 
 
 func (wh *WebhookHandler) verifySignature(payload []byte, signature string) bool {
 	if wh.webhookSecret == "" {
-		// If no secret is configured, skip verification (not recommended for production)
-		return true
+		return false
 	}
 
 	if signature == "" {

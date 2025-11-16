@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"time"
 )
 
@@ -95,7 +96,7 @@ func (c *Client) GetPaymentStatus(ctx context.Context, paymentID string) (*Payme
 }
 
 func (c *Client) GetPaymentByReference(ctx context.Context, reference string) (*PaymentResponse, error) {
-	path := fmt.Sprintf("/api/payments?reference=%s", reference)
+	path := fmt.Sprintf("/api/payments?reference=%s", url.QueryEscape(reference))
 
 	var result PaymentResponse
 	if err := c.DoRequest(ctx, "GET", path, nil, &result); err != nil {

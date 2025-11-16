@@ -217,7 +217,14 @@ fmt.Printf("Provider Reference: %s\n", payment.ProviderReference)
 
 ## Webhooks
 
+**Important:** Webhook signature verification is required for production use. If `SetWebhookSecret` is called with an empty string, the webhook handler will be set to `nil`, and all webhook requests will be rejected. This is a security feature to prevent accepting unverified webhooks.
+
+Always provide a valid webhook secret obtained from your Standard Bank API dashboard before handling webhooks in production.
+
 ### Setting Up Webhook Handler
+
+// Set webhook secret for signature verification
+// WARNING: An empty secret will result in a nil handler that rejects all webhooks
 
 ```go
 // Set webhook secret for signature verification
@@ -275,7 +282,7 @@ export STANDARD_BANK_WEBHOOK_SECRET="your-webhook-secret"
 - `Providers()` - Returns providers service
 - `SetWebhookSecret(secret string)` - Set webhook secret
 - `HandleWebhook(w, r)` - Handle incoming webhook
-- `RegisterWebhookHandler(eventType, handler)` - Register webhook handler
+- `RegisterWebhookHandler(eventType, handler)` - Register webhook handler (requires WebhookSecret)
 
 ### Payments Service
 
