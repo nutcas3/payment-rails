@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -105,7 +106,7 @@ type AuthResponse struct {
 }
 
 type ErrorResponse struct {
-	Error            string                 `json:"error,omitempty"`
+	Err              string                 `json:"error,omitempty"`
 	ErrorDescription string                 `json:"error_description,omitempty"`
 	Message          string                 `json:"message,omitempty"`
 	Code             string                 `json:"code,omitempty"`
@@ -115,13 +116,13 @@ type ErrorResponse struct {
 
 func (e *ErrorResponse) Error() string {
 	if e.ErrorDescription != "" {
-		return fmt.Sprintf("Standard Bank API error: %s - %s", e.Error, e.ErrorDescription)
+		return fmt.Sprintf("Standard Bank API error: %s - %s", e.Err, e.ErrorDescription)
 	}
 	if e.Message != "" {
 		return fmt.Sprintf("Standard Bank API error [%s]: %s", e.Code, e.Message)
 	}
-	if e.Error != "" {
-		return fmt.Sprintf("Standard Bank API error: %s", e.Error)
+	if e.Err != "" {
+		return fmt.Sprintf("Standard Bank API error: %s", e.Err)
 	}
 	return fmt.Sprintf("Standard Bank API error: status %d", e.Status)
 }
@@ -142,23 +143,17 @@ func (c *Client) Authenticate(ctx context.Context) error {
 		return nil
 	}
 
-	payload := map[string]string{
-		"grant_type":    "client_credentials",
-		"client_id":     c.clientID,
-		"client_secret": c.clientSecret,
-	}
+	data := url.Values{}
+	data.Set("grant_type", "client_credentials")
+	data.Set("client_id", c.clientID)
+	data.Set("client_secret", c.clientSecret)
 
-	data, err := json.Marshal(payload)
-	if err != nil {
-		return fmt.Errorf("failed to marshal auth payload: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "POST", c.baseURL+"/oauth/token", bytes.NewBuffer(data))
+	req, err := http.NewRequestWithContext(ctx, "POST", c.baseURL+"/oauth/token", strings.NewReader(data.Encode()))
 	if err != nil {
 		return fmt.Errorf("failed to create auth request: %w", err)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 
 	if c.apiKey != "" {

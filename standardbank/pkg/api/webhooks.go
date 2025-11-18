@@ -8,13 +8,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 type WebhookEvent struct {
 	EventID      string                 `json:"eventId"`
 	EventType    string                 `json:"eventType"`
-	Timestamp    time.Time              `json:"timestamp"`
+	Timestamp    JSONTime               `json:"timestamp"`
 	ResourceType string                 `json:"resourceType"`
 	ResourceID   string                 `json:"resourceId"`
 	Data         map[string]interface{} `json:"data"`

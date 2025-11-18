@@ -32,10 +32,10 @@ type PaymentResponse struct {
 	Description        string                 `json:"description,omitempty"`
 	SourceAccount      string                 `json:"sourceAccount,omitempty"`
 	DestinationAccount string                 `json:"destinationAccount,omitempty"`
-	ProcessingDate     time.Time              `json:"processingDate"`
-	SettlementDate     *time.Time             `json:"settlementDate,omitempty"`
-	CreatedAt          time.Time              `json:"createdAt"`
-	UpdatedAt          time.Time              `json:"updatedAt"`
+	ProcessingDate     JSONTime               `json:"processingDate"`
+	SettlementDate     *JSONTime              `json:"settlementDate,omitempty"`
+	CreatedAt          JSONTime               `json:"createdAt"`
+	UpdatedAt          JSONTime               `json:"updatedAt"`
 	Metadata           map[string]interface{} `json:"metadata,omitempty"`
 }
 
@@ -49,10 +49,10 @@ type PaymentStatusResponse struct {
 	Reference          string                 `json:"reference"`
 	SourceAccount      string                 `json:"sourceAccount,omitempty"`
 	DestinationAccount string                 `json:"destinationAccount,omitempty"`
-	ProcessingDate     time.Time              `json:"processingDate"`
-	SettlementDate     *time.Time             `json:"settlementDate,omitempty"`
+	ProcessingDate     JSONTime               `json:"processingDate"`
+	SettlementDate     *JSONTime              `json:"settlementDate,omitempty"`
 	FailureReason      string                 `json:"failureReason,omitempty"`
-	LastUpdated        time.Time              `json:"lastUpdated"`
+	LastUpdated        JSONTime               `json:"lastUpdated"`
 	Metadata           map[string]interface{} `json:"metadata,omitempty"`
 }
 
