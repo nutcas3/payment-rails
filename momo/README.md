@@ -61,7 +61,6 @@ package main
 
 import (
     "github.com/nutcas3/payment-rails/momo"
-    "github.com/nutcas3/payment-rails/momo/pkg/api"
 )
 ```
 
@@ -70,28 +69,48 @@ import (
 ### Initialize the Client
 
 ```go
-// Initialize the MTN MoMo client
-client, err := momo.NewClient(
-    "your-api-user-uuid",           // API User from MTN Developer Portal
-    "your-api-key",                 // API Key from MTN Developer Portal
-    "your-subscription-key",        // Subscription Key from MTN Developer Portal
-    momo.SANDBOX,                   // Environment (momo.SANDBOX or momo.PRODUCTION)
-)
+// Initialize the MTN MoMo client with flexible product configuration
+client, err := momo.New(momo.ClientConfig{
+    Environment:                 string(momo.SANDBOX), // or momo.PRODUCTION
+    APIKey:                      "your-api-key",
+    APISecret:                   "your-api-secret", 
+    CollectionSubscriptionKey:   "your-collection-subscription-key",   // Optional: only if using Collection
+    DisbursementSubscriptionKey: "your-disbursement-subscription-key", // Optional: only if using Disbursement
+    RemittanceSubscriptionKey:   "your-remittance-subscription-key",   // Optional: only if using Remittance
+})
 if err != nil {
     log.Fatalf("Failed to initialize MTN MoMo client: %v", err)
 }
 
-// Use custom HTTP client if needed
-client.SetHttpClient(&http.Client{
-    Timeout: 30 * time.Second,
-})
-
-// Get authentication token
-token, err := client.GetCollectionToken()
-if err != nil {
-    log.Fatalf("Failed to get auth token: %v", err)
+// Use Collection API if subscription key was provided
+if client.Collection != nil {
+    balance, err := client.Collection.GetAccountBalance(context.Background())
+    if err != nil {
+        log.Printf("Failed to get collection balance: %v", err)
+    } else {
+        fmt.Printf("Collection Balance: %s %s\n", balance.AvailableBalance, balance.Currency)
+    }
 }
-fmt.Printf("Auth Token: %s\n", token)
+
+// Use Disbursement API if subscription key was provided
+if client.Disbursement != nil {
+    balance, err := client.Disbursement.GetAccountBalance(context.Background())
+    if err != nil {
+        log.Printf("Failed to get disbursement balance: %v", err)
+    } else {
+        fmt.Printf("Disbursement Balance: %s %s\n", balance.AvailableBalance, balance.Currency)
+    }
+}
+
+// Use Remittance API if subscription key was provided
+if client.Remittance != nil {
+    balance, err := client.Remittance.GetAccountBalance(context.Background())
+    if err != nil {
+        log.Printf("Failed to get remittance balance: %v", err)
+    } else {
+        fmt.Printf("Remittance Balance: %s %s\n", balance.AvailableBalance, balance.Currency)
+    }
+}
 ```
 
 ## Examples
@@ -101,31 +120,39 @@ fmt.Printf("Auth Token: %s\n", token)
 #### Request-to-Pay
 
 ```go
-// Initiate a request-to-pay transaction
-response, err := client.RequestToPay(api.RequestToPayRequest{
+// Initiate a request-to-pay transaction using Collection service
+ctx := context.Background()
+refID := uuid.New()
+
+err := client.Collection.RequestToPay(ctx, refID, "https://example.com/callback", true, momo.RequestToPayInput{
     Amount:       "100",
     Currency:     "EUR",
     ExternalID:   "123456789",
-    Payer: api.Payer{
+    Payer: momo.Payer{
         PartyIDType: "MSISDN",
         PartyID:     "256774290781",
     },
     PayerMessage: "Payment for services",
     PayeeNote:    "Thank you for your payment",
-    CallbackURL:  "https://example.com/callback",
 })
 if err != nil {
     log.Fatalf("Request-to-pay failed: %v", err)
 }
-fmt.Printf("Reference ID: %s\n", response.ReferenceID)
-fmt.Printf("Status: %s\n", response.Status)
+
+// Check transaction status
+status, err := client.Collection.RequestToPayTransactionStatus(ctx, refID)
+if err != nil {
+    log.Fatalf("Failed to get transaction status: %v", err)
+}
+fmt.Printf("Transaction Status: %s\n", status.Status)
 ```
 
 #### Check Transaction Status
 
 ```go
 // Check the status of a request-to-pay transaction
-status, err := client.GetRequestToPayStatus(response.ReferenceID)
+ctx := context.Background()
+status, err := client.Collection.RequestToPayTransactionStatus(ctx, refID)
 if err != nil {
     log.Fatalf("Failed to get transaction status: %v", err)
 }
@@ -138,7 +165,8 @@ fmt.Printf("Financial Transaction ID: %s\n", status.FinancialTransactionID)
 
 ```go
 // Get collection account balance
-balance, err := client.GetAccountBalance()
+ctx := context.Background()
+balance, err := client.Collection.GetAccountBalance(ctx)
 if err != nil {
     log.Fatalf("Failed to get account balance: %v", err)
 }
@@ -149,11 +177,12 @@ fmt.Printf("Available Balance: %s %s\n", balance.AvailableBalance, balance.Curre
 
 ```go
 // Validate if an account holder is active
-holder, err := client.ValidateAccountHolderStatus("256774290781")
+ctx := context.Background()
+active, err := client.Collection.ValidateAccountHolderStatus(ctx, "256774290781", "MSISDN")
 if err != nil {
     log.Fatalf("Failed to validate account holder: %v", err)
 }
-if holder.Result {
+if active {
     fmt.Println("Account holder is active")
 } else {
     fmt.Println("Account holder is not active")
@@ -164,7 +193,8 @@ if holder.Result {
 
 ```go
 // Get basic user information
-userInfo, err := client.GetBasicUserInfo("256774290781")
+ctx := context.Background()
+userInfo, err := client.Collection.GetBasicUserInfo(ctx, "MSISDN", "256774290781")
 if err != nil {
     log.Fatalf("Failed to get user info: %v", err)
 }
@@ -174,151 +204,80 @@ fmt.Printf("Gender: %s\n", userInfo.Gender)
 
 ### Disbursements API
 
-#### Transfer Funds
+Use the `client.Disbursement` service to access disbursement methods:
 
 ```go
-// Initiate a disbursement transfer
-response, err := client.Transfer(api.TransferRequest{
+// Transfer funds
+ctx := context.Background()
+refID := uuid.New()
+
+err := client.Disbursement.Transfer(ctx, refID, "https://example.com/callback", types.TransferInput{
     Amount:       "100",
-    Currency:     "EUR",
+    Currency:     types.EUR,
     ExternalID:   "987654321",
-    Payee: api.Payee{
-        PartyIDType: "MSISDN",
+    Payee: types.Party{
+        PartyIDType: types.MSISDN,
         PartyID:     "256774290781",
     },
     PayerMessage: "Salary payment",
     PayeeNote:    "Your salary for January",
-    CallbackURL:  "https://example.com/callback",
 })
-if err != nil {
-    log.Fatalf("Transfer failed: %v", err)
-}
-fmt.Printf("Reference ID: %s\n", response.ReferenceID)
-fmt.Printf("Status: %s\n", response.Status)
-```
 
-#### Check Transfer Status
+// Check transfer status
+status, err := client.Disbursement.GetTransferStatus(ctx, refID)
 
-```go
-// Check the status of a transfer
-status, err := client.GetTransferStatus(response.ReferenceID)
-if err != nil {
-    log.Fatalf("Failed to get transfer status: %v", err)
-}
-fmt.Printf("Transfer Status: %s\n", status.Status)
-fmt.Printf("Amount: %s %s\n", status.Amount, status.Currency)
-```
-
-#### Get Disbursement Balance
-
-```go
-// Get disbursement account balance
-balance, err := client.GetDisbursementBalance()
-if err != nil {
-    log.Fatalf("Failed to get disbursement balance: %v", err)
-}
-fmt.Printf("Available Balance: %s %s\n", balance.AvailableBalance, balance.Currency)
+// Get disbursement balance
+balance, err := client.Disbursement.GetAccountBalance(ctx)
 ```
 
 ### Remittances API
 
-#### Send Remittance
+Use the `client.Remittance` service to access remittance methods:
 
 ```go
-// Initiate a remittance transfer
-response, err := client.Remit(api.RemittanceRequest{
+// Send remittance
+ctx := context.Background()
+refID := uuid.New()
+
+err := client.Remittance.Transfer(ctx, refID, "https://example.com/callback", types.CashTransferInput{
     Amount:       "500",
-    Currency:     "EUR",
+    Currency:     types.EUR,
     ExternalID:   "REM123456",
-    Payee: api.Payee{
-        PartyIDType: "MSISDN",
+    Payee: types.Party{
+        PartyIDType: types.MSISDN,
         PartyID:     "256774290781",
     },
     PayerMessage: "International transfer",
     PayeeNote:    "Money from abroad",
-    CallbackURL:  "https://example.com/callback",
 })
-if err != nil {
-    log.Fatalf("Remittance failed: %v", err)
-}
-fmt.Printf("Reference ID: %s\n", response.ReferenceID)
-fmt.Printf("Status: %s\n", response.Status)
-```
 
-#### Check Remittance Status
+// Check remittance status
+status, err := client.Remittance.GetTransferStatus(ctx, refID)
 
-```go
-// Check the status of a remittance
-status, err := client.GetRemittanceStatus(response.ReferenceID)
-if err != nil {
-    log.Fatalf("Failed to get remittance status: %v", err)
-}
-fmt.Printf("Remittance Status: %s\n", status.Status)
-fmt.Printf("Amount: %s %s\n", status.Amount, status.Currency)
-```
-
-#### Get Remittance Balance
-
-```go
-// Get remittance account balance
-balance, err := client.GetRemittanceBalance()
-if err != nil {
-    log.Fatalf("Failed to get remittance balance: %v", err)
-}
-fmt.Printf("Available Balance: %s %s\n", balance.AvailableBalance, balance.Currency)
+// Get remittance balance
+balance, err := client.Remittance.GetAccountBalance(ctx)
 ```
 
 ### Refunds API
 
-#### Refund Transaction (V1)
+Use the `client.Disbursement` service to access refund methods:
 
 ```go
-// Initiate a refund
-response, err := client.Refund(api.RefundRequest{
+// Process refund (V1)
+ctx := context.Background()
+refID := uuid.New()
+
+err := client.Disbursement.RefundV1(ctx, refID, "https://example.com/callback", types.RefundInput{
     Amount:              "100",
-    Currency:            "EUR",
+    Currency:            types.EUR,
     ExternalID:          "REF123456",
     PayerMessage:        "Refund for order #12345",
     PayeeNote:           "Refund processed",
     ReferenceIDToRefund: "original-transaction-reference-id",
-    CallbackURL:         "https://example.com/callback",
 })
-if err != nil {
-    log.Fatalf("Refund failed: %v", err)
-}
-fmt.Printf("Refund Reference ID: %s\n", response.ReferenceID)
-fmt.Printf("Status: %s\n", response.Status)
-```
 
-#### Refund Transaction (V2)
-
-```go
-// Initiate a refund using V2 API
-response, err := client.RefundV2(api.RefundRequest{
-    Amount:              "100",
-    Currency:            "EUR",
-    ExternalID:          "REF123456",
-    PayerMessage:        "Refund for order #12345",
-    PayeeNote:           "Refund processed",
-    ReferenceIDToRefund: "original-transaction-reference-id",
-    CallbackURL:         "https://example.com/callback",
-})
-if err != nil {
-    log.Fatalf("Refund V2 failed: %v", err)
-}
-fmt.Printf("Refund Reference ID: %s\n", response.ReferenceID)
-```
-
-#### Check Refund Status
-
-```go
-// Check the status of a refund
-status, err := client.GetRefundStatus(response.ReferenceID)
-if err != nil {
-    log.Fatalf("Failed to get refund status: %v", err)
-}
-fmt.Printf("Refund Status: %s\n", status.Status)
-fmt.Printf("Amount: %s %s\n", status.Amount, status.Currency)
+// Check refund status
+status, err := client.Disbursement.GetRefundStatus(ctx, refID)
 ```
 
 ## Transaction Status Codes
@@ -357,10 +316,20 @@ The SDK supports both sandbox and production environments:
 
 ```go
 // Sandbox environment (for testing)
-client, err := momo.NewClient(apiUser, apiKey, subscriptionKey, momo.SANDBOX)
+client, err := momo.New(momo.ClientConfig{
+    Environment:                 string(momo.SANDBOX),
+    APIKey:                      "your-api-key",
+    APISecret:                   "your-api-secret",
+    CollectionSubscriptionKey:   "your-collection-subscription-key",
+})
 
 // Production environment (for live transactions)
-client, err := momo.NewClient(apiUser, apiKey, subscriptionKey, momo.PRODUCTION)
+client, err := momo.New(momo.ClientConfig{
+    Environment:                 string(momo.PRODUCTION),
+    APIKey:                      "your-api-key",
+    APISecret:                   "your-api-secret",
+    CollectionSubscriptionKey:   "your-collection-subscription-key",
+})
 ```
 
 ## API Endpoints
